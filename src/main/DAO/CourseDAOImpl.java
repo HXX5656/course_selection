@@ -17,12 +17,13 @@ public class CourseDAOImpl implements CourseDAO {
     public int append(Course course) {
         Connection connection= SqlUtil.createCon();
         try {
-            String sql= "INSERT  INTO `data`.`course` (course_id, course_name, credit, period) VALUES (?, ?, ?, ?)";
+            String sql= "INSERT  INTO `data`.`course` (course_id, course_name, credit, period,course_dep) VALUES (?, ?, ?, ?,?)";
             PreparedStatement ppst = connection.prepareStatement(sql);
             ppst.setString(1,course.getCourse_id());
             ppst.setString(2,course.getCourse_name());
             ppst.setString(3,course.getCredit());
             ppst.setString(4,course.getPeriod());
+            ppst.setString(5,course.getDepartment());
 
             int ret=ppst.executeUpdate();
             SqlUtil.closeCon();
@@ -66,6 +67,8 @@ public class CourseDAOImpl implements CourseDAO {
                 match +=", credit='"+course.getCredit()+"' ";
             if(StringUtil.isNotEmpty(course.getPeriod()))
                 match +=", period='"+course.getPeriod()+"' ";
+            if(StringUtil.isNotEmpty(course.getDepartment()))
+                match +=", course_dep='"+course.getDepartment()+"' ";
             if (!match.isEmpty()) {
                 sql+=match.substring(1);//delete the first ,
             }
@@ -108,6 +111,7 @@ public class CourseDAOImpl implements CourseDAO {
                 map.put("course_name",res.getString("course_name"));
                 map.put("credit",res.getString("credit"));
                 map.put("period",res.getString("period"));
+                map.put("department",res.getString("course_dep"));
                 result.add(map);
 
             }
