@@ -8,4 +8,5 @@ public class DAOFactory {
         return new TeacherDAOImpl();
     }
     public static StudentDAO getStudentDAOInstance(){return new StudentDAOImpl();}
+    public static SectionDAO getSectionDAOInstance(){return new SectionDAOImpl();}
 }
