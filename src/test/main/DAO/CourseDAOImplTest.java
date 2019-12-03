@@ -31,7 +31,7 @@ private static CourseDAO courseDAO= DAOFactory.getCourseDAOInstance();
 */ 
 @Test
 public void testAppend() throws Exception {
-    Course course=new Course("1","CSE","2","100","1");
+    Course course=new Course("4","CSE","2","100","1");
     assert (1==courseDAO.append(course));
 } 
 
@@ -54,7 +54,10 @@ public void testDelete() throws Exception {
 */ 
 @Test
 public void testModify() throws Exception { 
-//TODO: Test goes here... 
+
+    Course course=new Course("1","ICS","","","");
+    assert (1==courseDAO.modify(course));
+
 } 
 
 /** 
@@ -64,7 +67,9 @@ public void testModify() throws Exception {
 */ 
 @Test
 public void testInfoList() throws Exception { 
-//TODO: Test goes here... 
+
+    String course_id="1";
+    System.out.println(courseDAO.infoList(course_id));
 } 
 
 

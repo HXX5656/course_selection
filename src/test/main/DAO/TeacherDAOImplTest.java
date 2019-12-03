@@ -33,7 +33,9 @@ private static TeacherDAO teacherDAO=DAOFactory.getTeacherDAOInstance();
 */ 
 @Test
 public void testInfoList() throws Exception { 
-//TODO: Test goes here... 
+
+    String teacher_id ="1";
+    System.out.println(teacherDAO.infoList(teacher_id));
 } 
 
 /** 
@@ -44,7 +46,7 @@ public void testInfoList() throws Exception {
 @Test
 public void testAppend() throws Exception {
 
-    Teacher teacher=new Teacher("1","blw",null,null,"CS");
+    Teacher teacher=new Teacher("1","blw",null,null,"1");
     assert (teacherDAO.append(teacher)==1);
 } 
 
@@ -55,7 +57,10 @@ public void testAppend() throws Exception {
 */ 
 @Test
 public void testDelete() throws Exception { 
-//TODO: Test goes here... 
+
+    String teacher_id ="1";
+    assert (teacherDAO.delete(teacher_id)==1);
+
 } 
 
 /** 
@@ -65,7 +70,10 @@ public void testDelete() throws Exception {
 */ 
 @Test
 public void testModify() throws Exception { 
-//TODO: Test goes here... 
+
+    Teacher teacher=new Teacher("1","hxx","2005-01-13",null,"1");
+    assert (teacherDAO.modify(teacher)==1);
+
 } 
 
 
