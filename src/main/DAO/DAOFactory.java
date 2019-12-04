@@ -1,5 +1,6 @@
 package main.DAO;
 
+import main.entity.Sec_arrangement;
 import main.entity.Timeslot;
 
 public class DAOFactory {
@@ -24,5 +25,6 @@ public class DAOFactory {
     }
     public static EssayDAO getEssayDAOInstance() {return new EssayDAOImpl();}
     public static TimeslotDAO getTimeslotDAOInstance(){return new TimeslotDAOImpl();}
+    public static Sec_arrangementDAO getSecArrangementDAOInstance() {return new Sec_arrangementDAOImpl();}
 
 }
