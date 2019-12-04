@@ -1,6 +1,6 @@
 package main.DAO;
 
-import main.entity.Course;
+import main.entity.Application;
 import main.util.SqlUtil;
 import main.util.StringUtil;
 
@@ -12,18 +12,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CourseDAOImpl implements CourseDAO {
+public class ApplicationDAOImpl implements ApplicationDAO {
     @Override
-    public int append(Course course) {
+    public int append(Application application) {
         Connection connection= SqlUtil.createCon();
         try {
-            String sql= "INSERT  INTO `data`.`course` (course_id, course_name, credit, period,course_dep) VALUES (?, ?, ?, ?,?)";
+            String sql= "INSERT  INTO `data`.`application` (app_id, reason, status, apply_time,student_id,course_id,section_id,semester,year) VALUES (?, ?, ?, ?,?,?,?,?,?)";
             PreparedStatement ppst = connection.prepareStatement(sql);
-            ppst.setString(1,course.getCourse_id());
-            ppst.setString(2,course.getCourse_name());
-            ppst.setString(3,course.getCredit());
-            ppst.setString(4,course.getPeriod());
-            ppst.setString(5,course.getDepartment());
+            ppst.setString(1,StringUtil.isEmpty(application.getApp_id())?"NULL":application.getApp_id());
+            ppst.setString(2,application.getReason());
+            ppst.setString(3,application.getStatus());
+            ppst.setString(4,application.getApp_time());
+            ppst.setString(5,application.getStudent_id());
+            ppst.setString(6,application.getCourse_id());
+            ppst.setString(7,application.getSection_id());
+            ppst.setString(8,application.getSemester());
+            ppst.setString(9,application.getYear());
 
             int ret=ppst.executeUpdate();
             SqlUtil.closeCon();
@@ -33,15 +37,14 @@ public class CourseDAOImpl implements CourseDAO {
             SqlUtil.closeCon();
             return -1;
         }
-
     }
 
     @Override
-    public int delete(String course_id) {
+    public int delete(String app_id) {
         Connection connection =SqlUtil.createCon();
         try
         {
-            String sql = "DELETE FROM `data`.`course` WHERE course_id='" + course_id + "'";
+            String sql = "DELETE FROM `data`.`application` WHERE app_id='" + app_id + "'";
             PreparedStatement ppst=connection.prepareStatement(sql);
             int ret=ppst.executeUpdate();
             SqlUtil.closeCon();
@@ -54,27 +57,23 @@ public class CourseDAOImpl implements CourseDAO {
     }
 
     @Override
-    public int modify(Course course) {
+    public int modify(Application application) {
         Connection connection=SqlUtil.createCon();
         try {
-            String sql = "UPDATE `data`.`course` SET ";
+            String sql = "UPDATE `data`.`application` SET ";
             String match="";
 //            if(StringUtil.isNotEmpty(course.getCourse_id()))
 //                match +=", course_id='"+course.getCourse_id()+"' ";
-            if(StringUtil.isNotEmpty(course.getCourse_name()))
-                match +=", course_name='"+course.getCourse_name()+"' ";
-            if(StringUtil.isNotEmpty(course.getCredit()))
-                match +=", credit='"+course.getCredit()+"' ";
-            if(StringUtil.isNotEmpty(course.getPeriod()))
-                match +=", period='"+course.getPeriod()+"' ";
-            if(StringUtil.isNotEmpty(course.getDepartment()))
-                match +=", course_dep='"+course.getDepartment()+"' ";
+            if(StringUtil.isNotEmpty(application.getReason()))
+                match +=", reason='"+application.getReason()+"' ";
+            if(StringUtil.isNotEmpty(application.getStatus()))
+                match +=", status='"+application.getStatus()+"' ";
             if (!match.isEmpty()) {
                 sql+=match.substring(1);//delete the first ,
-            } else  {
+            } else {
                 return 0;
             }
-            sql+="WHERE course_id='"+course.getCourse_id()+"'";
+            sql+="WHERE app_id='"+application.getApp_id()+"'";
             PreparedStatement ppst=connection.prepareStatement(sql);
             int ret=ppst.executeUpdate();
             SqlUtil.closeCon();
@@ -87,12 +86,11 @@ public class CourseDAOImpl implements CourseDAO {
     }
 
     @Override
-    public List<Map<String, String>> infoList(String course_id) {
-
+    public List<Map<String, String>> infoList(String app_id) {
         Connection connection=SqlUtil.createCon();
         try
         {
-            String sql="select * from data.course where course_id ="+course_id;
+            String sql="select * from data.application where app_id ="+app_id;
             PreparedStatement ppst=connection.prepareStatement(sql);
             ResultSet res=ppst.executeQuery();
             SqlUtil.closeCon();
@@ -102,18 +100,21 @@ public class CourseDAOImpl implements CourseDAO {
             SqlUtil.closeCon();
             return null;
         }
-
     }
     private List<Map<String,String>> setReturn(ResultSet res) {
         try {
             List<Map<String,String>> result = new ArrayList<>();
             while (res.next()) {
                 Map<String,String> map=new HashMap<>();
+                map.put("app_id",res.getString("app_id"));
+                map.put("reason",res.getString("reason"));
+                map.put("status",res.getString("status"));
+                map.put("apply_time",res.getString("apply_time"));
+                map.put("student_id",res.getString("student_id"));
                 map.put("course_id",res.getString("course_id"));
-                map.put("course_name",res.getString("course_name"));
-                map.put("credit",res.getString("credit"));
-                map.put("period",res.getString("period"));
-                map.put("department",res.getString("course_dep"));
+                map.put("section_id",res.getString("section_id"));
+                map.put("semester",res.getString("semester"));
+                map.put("year",res.getString("year"));
                 result.add(map);
 
             }

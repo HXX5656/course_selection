@@ -50,6 +50,8 @@ public class TakesDAOImpl implements TakesDAO {
             }
             if (!match.isEmpty()) {
                 sql += match.substring(1);//delete the first ,
+            } else {
+                return 0;
             }
             sql += "WHERE student_id='" + takes.getStudent_id() + "' AND course_id='" + takes.getCourse_id() + "' AND section_id='" + takes.getSection_id() + "' AND semester='" + takes.getSemester() + "' AND year='" + takes.getYear() + "'";
             PreparedStatement ppst = connection.prepareStatement(sql);

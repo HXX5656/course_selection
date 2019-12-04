@@ -31,7 +31,7 @@ public class StudentDAOImplTest {
      */
     @Test
     public void testAppend() throws Exception {
-        Student student = new Student("1", "blw", null, null, "1");
+        Student student = new Student("3", "b", null, null, "1");
         assert (studentDAO.append(student) == 1);
     }
 

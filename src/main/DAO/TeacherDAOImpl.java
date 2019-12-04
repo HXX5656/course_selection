@@ -88,6 +88,8 @@ public class TeacherDAOImpl implements TeacherDAO {
                 match+=", teacher_dep='"+teacher.getDepartment()+"' ";
             if(!match.isEmpty()) {
                 sql+=match.substring(1);
+            } else  {
+                return 0;
             }
             sql+="WHERE teacher_id='"+teacher.getTeacher_id()+"'";
             PreparedStatement ppst=connection.prepareStatement(sql);

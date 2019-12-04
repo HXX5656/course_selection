@@ -31,7 +31,7 @@ public class SectionDAOImplTest {
      */
     @Test
     public void testAppend() throws Exception {
-        Section section = new Section("1", "1", "2", "2019", "9", "10", "100", null);
+        Section section = new Section("1", "2", "2", "2019", "9", "10", "100", null);
         assert (1 == sectionDAO.append(section));
     }
 

@@ -52,7 +52,7 @@ public class TeachesDAOImpl implements TeachesDAO {
 
     @Override
     public int modify(Teaches teaches) {
-        return 1;
+        return 0;
     }
 
     @Override

@@ -78,6 +78,8 @@ public class SectionDAOImpl implements SectionDAO {
                 match += ", exam_id='" + section.getExam_id() + "' ";
             if (!match.isEmpty()) {
                 sql += match.substring(1);//delete the first ,
+            } else  {
+                return 0;
             }
             sql += "WHERE course_id='" + section.getCourse_id() + "' AND section_id='" + section.getSection_id() + "' AND semester='" + section.getSemester() + "' AND year='" + section.getYear() + "'";
             PreparedStatement ppst = connection.prepareStatement(sql);
