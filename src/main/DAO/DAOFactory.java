@@ -25,6 +25,6 @@ public class DAOFactory {
     }
     public static EssayDAO getEssayDAOInstance() {return new EssayDAOImpl();}
     public static TimeslotDAO getTimeslotDAOInstance(){return new TimeslotDAOImpl();}
-    public static Sec_arrangementDAO getSecArrangementDAOInstance() {return new Sec_arrangementDAOImpl();}
-
+    public static Sec_arrangementDAO getSecArrangementDAOInstance(){return  new Sec_arrangementDAOImpl();}
+    public static PaperDAO getPaperDAOInstance(){return new PaperDAOImpl();}
 }
