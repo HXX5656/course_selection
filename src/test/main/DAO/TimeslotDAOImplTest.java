@@ -33,7 +33,7 @@ private static TimeslotDAO timeslotDAO = DAOFactory.getTimeslotDAOInstance();
 */ 
 @Test
 public void testAppend() throws Exception {
-    Timeslot timeslot = new Timeslot("5","6","7");
+    Timeslot timeslot = new Timeslot("8","9","2");
     assert (1 == timeslotDAO.append(timeslot));
 } 
 
@@ -44,7 +44,7 @@ public void testAppend() throws Exception {
 */ 
 @Test
 public void testModify() throws Exception { 
-    Timeslot timeslot = new Timeslot("4","6","7","8");
+    Timeslot timeslot = new Timeslot("4","6","7","4");
     assert (1 == timeslotDAO.modify(timeslot));
 } 
 

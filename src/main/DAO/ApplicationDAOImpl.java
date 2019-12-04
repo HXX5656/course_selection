@@ -19,9 +19,9 @@ public class ApplicationDAOImpl implements ApplicationDAO {
         try {
             String sql= "INSERT  INTO `data`.`application` (app_id, reason, status, apply_time,student_id,course_id,section_id,semester,year) VALUES (?, ?, ?, ?,?,?,?,?,?)";
             PreparedStatement ppst = connection.prepareStatement(sql);
-            ppst.setString(1,StringUtil.isEmpty(application.getApp_id())?"NULL":application.getApp_id());
+            ppst.setString(1,StringUtil.isEmpty(application.getApp_id())?"0":application.getApp_id());
             ppst.setString(2,application.getReason());
-            ppst.setString(3,application.getStatus());
+            ppst.setString(3,StringUtil.isEmpty(application.getStatus())?"0":application.getStatus());
             ppst.setString(4,application.getApp_time());
             ppst.setString(5,application.getStudent_id());
             ppst.setString(6,application.getCourse_id());

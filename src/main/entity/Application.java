@@ -11,12 +11,12 @@ public class Application {
     private String semester;
     private String year;
 
-    public Application(String app_id, String reason, String status, String app_time, String studeng_id, String course_id, String section_id, String semester, String year) {
+    public Application(String app_id, String reason, String status, String app_time, String student_id, String course_id, String section_id, String semester, String year) {
         this.app_id = app_id;
         this.reason = reason;
         this.status = status;
         this.app_time = app_time;
-        this.student_id = studeng_id;
+        this.student_id = student_id;
         this.course_id = course_id;
         this.section_id = section_id;
         this.semester = semester;

@@ -43,7 +43,9 @@ public void testAppend() throws Exception {
 */ 
 @Test
 public void testDelete() throws Exception { 
-//TODO: Test goes here... 
+    String exam_id="1";
+    assert (essayDAO.delete(exam_id)==1);
+
 } 
 
 /** 
@@ -53,7 +55,9 @@ public void testDelete() throws Exception {
 */ 
 @Test
 public void testModify() throws Exception { 
-//TODO: Test goes here... 
+
+    Essay essay=new Essay("1","3050字 不准抄袭");
+    assert (1==essayDAO.modify(essay));
 } 
 
 /** 
@@ -63,7 +67,9 @@ public void testModify() throws Exception {
 */ 
 @Test
 public void testInfoList() throws Exception { 
-//TODO: Test goes here... 
+
+    String exam_id="1";
+    System.out.println(essayDAO.infoList(exam_id));
 } 
 
 

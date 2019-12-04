@@ -67,7 +67,8 @@ public class TakesDAOImplTest {
         String section_id = "9";
         String semester = "1";
         String year = "2020";
-        assert (1 == takesDAO.delete(student_id,course_id,section_id,semester,year));
+        Takes takes=new Takes(student_id,course_id,section_id,semester,year,"");
+        assert (1 == takesDAO.delete(takes));
     }
 
 

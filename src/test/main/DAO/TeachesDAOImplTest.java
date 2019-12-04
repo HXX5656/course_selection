@@ -53,7 +53,7 @@ public class TeachesDAOImplTest {
         String course_id = "9";
         String section_id = "9";
         String semester = "1";
-        String year = "2020";
+        String year = "2019";
         System.out.println(teachesDAO.infoList(teacher_id, course_id, section_id, semester, year));
     }
 

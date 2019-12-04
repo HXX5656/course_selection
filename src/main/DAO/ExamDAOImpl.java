@@ -3,6 +3,7 @@ package main.DAO;
 import main.entity.Essay;
 import main.entity.Exam;
 import main.util.SqlUtil;
+import main.util.StringUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,7 +20,7 @@ public class ExamDAOImpl implements ExamDAO {
         try {
             String sql = "INSERT  INTO `data`.`exam` (exam_id, exam_week) VALUES (?, ?)";
             PreparedStatement ppst = connection.prepareStatement(sql);
-            ppst.setString(1, exam.getExam_id());
+            ppst.setString(1, StringUtil.isEmpty(exam.getExam_id())?"0":exam.getExam_id());
             ppst.setString(2, exam.getExam_week());
 
             int ret=ppst.executeUpdate();

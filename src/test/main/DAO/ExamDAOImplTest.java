@@ -1,6 +1,9 @@
 package test.main.DAO; 
 
-import org.junit.Test; 
+import main.DAO.DAOFactory;
+import main.DAO.ExamDAO;
+import main.entity.Exam;
+import org.junit.Test;
 import org.junit.Before; 
 import org.junit.After; 
 
@@ -19,7 +22,8 @@ public void before() throws Exception {
 
 @After
 public void after() throws Exception { 
-} 
+}
+private ExamDAO examDAO= DAOFactory.getExamDAOInstance();
 
 /** 
 * 
@@ -28,7 +32,9 @@ public void after() throws Exception {
 */ 
 @Test
 public void testAppend() throws Exception { 
-//TODO: Test goes here... 
+
+    Exam exam=new Exam("","18");
+    assert (1==examDAO.append(exam));
 } 
 
 /** 
@@ -38,7 +44,9 @@ public void testAppend() throws Exception {
 */ 
 @Test
 public void testDelete() throws Exception { 
-//TODO: Test goes here... 
+
+    String exam_id="1";
+    assert (1==examDAO.delete(exam_id));
 } 
 
 /** 
@@ -58,7 +66,9 @@ public void testModify() throws Exception {
 */ 
 @Test
 public void testInfoList() throws Exception { 
-//TODO: Test goes here... 
+
+    String exam_id="1";
+    System.out.println(examDAO.infoList(exam_id));
 } 
 
 
