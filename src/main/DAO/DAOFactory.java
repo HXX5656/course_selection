@@ -1,5 +1,7 @@
 package main.DAO;
 
+import main.entity.Timeslot;
+
 public class DAOFactory {
     public static CourseDAO getCourseDAOInstance() {
         return new CourseDAOImpl();
@@ -11,4 +13,5 @@ public class DAOFactory {
     public static SectionDAO getSectionDAOInstance(){return new SectionDAOImpl();}
     public static TeachesDAO getTeachesDAOInstance(){return new TeachesDAOImpl();}
     public static TakesDAO getTakesDAOInstance(){return new TakesDAOImpl();}
+    public static TimeslotDAO getTimeslotDAOInstance(){return new TimeslotDAOImpl();}
 }
