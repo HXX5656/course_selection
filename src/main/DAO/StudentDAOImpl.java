@@ -7,6 +7,7 @@ import main.util.StringUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,11 +22,11 @@ public class StudentDAOImpl implements StudentDAO {
         try {
             String sql= "INSERT  INTO `data`.`student` (student_id, student_name, enter_time, gradu_time,student_dep) VALUES (?, ?, ?, ?,?)";
             PreparedStatement ppst = connection.prepareStatement(sql);
-            ppst.setString(1,student.getStudent_id());
-            ppst.setString(2,student.getStudent_name());
-            ppst.setString(3,student.getEnter_time());
-            ppst.setString(4,student.getGradu_time());
-            ppst.setString(5,student.getDepartment());
+            StringUtil.set_string(ppst,1,student.getStudent_id(), Types.INTEGER);
+            StringUtil.set_string(ppst,2,student.getStudent_name(),Types.VARCHAR);
+            StringUtil.set_string(ppst,3,student.getEnter_time(),Types.DATE);
+            StringUtil.set_string(ppst,4,student.getGradu_time(),Types.DATE);
+            StringUtil.set_string(ppst,5,student.getDepartment(),Types.INTEGER);
 
             int ret=ppst.executeUpdate();
             SqlUtil.closeCon();

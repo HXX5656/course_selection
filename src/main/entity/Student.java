@@ -16,6 +16,9 @@ public class Student {
         this.department = department;
     }
 
+    public Student() {
+    }
+
     public String getStudent_id() {
         return student_id;
     }
