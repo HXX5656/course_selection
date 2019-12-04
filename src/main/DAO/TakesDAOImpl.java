@@ -45,8 +45,8 @@ public class TakesDAOImpl implements TakesDAO {
             String match = "";
             if (StringUtil.isNotEmpty(takes.getGrade())) {
                 match += ", grade='" + takes.getGrade() + "' ";
-            }else {
-                return 1;
+            } else {
+                return 0;
             }
             if (!match.isEmpty()) {
                 sql += match.substring(1);//delete the first ,
@@ -82,13 +82,28 @@ public class TakesDAOImpl implements TakesDAO {
     }
 
     @Override
-    public int delete(String student_id, String course_id, String section_id, String semster, String year) {
-        Connection connection =SqlUtil.createCon();
-        try
-        {
-            String sql = "DELETE  FROM data.takes where student_id =" + student_id + " AND course_id=" + course_id + " AND section_id=" + section_id + " AND semester=" + semster + " AND year=" + year;
-            PreparedStatement ppst=connection.prepareStatement(sql);
-            int ret=ppst.executeUpdate();
+    public int delete(Takes takes) {
+        Connection connection = SqlUtil.createCon();
+        try {
+            String sql = "DELETE  FROM data.takes WHERE ";
+            String match = "";
+            if (StringUtil.isNotEmpty(takes.getStudent_id()))
+                match += "AND student_id='" + takes.getStudent_id() + "' ";
+            if (StringUtil.isNotEmpty(takes.getCourse_id()))
+                match += "AND course_id='" + takes.getCourse_id() + "' ";
+            if (StringUtil.isNotEmpty(takes.getSection_id()))
+                match += "AND section_id='" + takes.getSection_id() + "' ";
+            if (StringUtil.isNotEmpty(takes.getSemester()))
+                match += "AND semester='" + takes.getSemester() + "'";
+            if (StringUtil.isNotEmpty(takes.getYear()))
+                match += "AND year='" + takes.getYear() + "'";
+            if (!match.isEmpty()){
+                sql += match.substring(3);
+            }else {
+                return 0;
+            }
+            PreparedStatement ppst = connection.prepareStatement(sql);
+            int ret = ppst.executeUpdate();
             SqlUtil.closeCon();
             return ret;
         } catch (Exception e) {

@@ -8,5 +8,5 @@ public interface TakesDAO {
     int append(Takes takes);
     int modify(Takes takes);
     List<Map<String,String>> infoList(String student_id,String course_id,String section_id,String semster,String year);
-    int delete(String student_id,String course_id,String section_id,String semster,String year);
+    int delete(Takes takes);
 }
