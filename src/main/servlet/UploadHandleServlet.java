@@ -16,14 +16,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-@WebServlet("/UploadHandleServlet")
+//@WebServlet("/UploadHandleServlet")
 public class UploadHandleServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req,resp);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
 
         System.out.println("进入servlet");
         DiskFileItemFactory fac=new DiskFileItemFactory();
@@ -73,7 +75,7 @@ public class UploadHandleServlet extends HttpServlet {
                                 + realPath
                                 + "\",\"imageName\":\"" + imageName + "\"}]";
                         response.reset();
-                        response.setContentType("import");
+                        response.setContentType("text/json");
                         response.setCharacterEncoding("UTF-8");
                         response.getWriter().write(json);
 //						response.getWriter().write(realPath);

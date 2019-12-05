@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.util.Map;
 
 public class Servlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req, resp);
@@ -20,6 +21,7 @@ public class Servlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("total get");
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
         PrintWriter pw=resp.getWriter();
