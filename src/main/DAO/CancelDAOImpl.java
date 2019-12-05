@@ -6,6 +6,9 @@ import main.util.StringUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,8 +42,30 @@ public class CancelDAOImpl implements CancelDAO {
     }
 
     @Override
-    public List<Map<String, String>> infoList(String student_id, String course_id, String section_id, String semester, String year) {
-        return null;
+    public int info_exist(String student_id, String course_id, String section_id, String semester, String year) {
+        Connection connection=SqlUtil.createCon();
+        try
+        {
+            String sql = "select * from data.cancel where student_id =" + student_id + " AND course_id=" + course_id + " AND section_id=" + section_id + " AND semester=" + semester + " AND year=" + year;
+            PreparedStatement ppst = connection.prepareStatement(sql);
+            ResultSet res=ppst.executeQuery();
+            List<Map<String,String>> result=setReturn(res);
+            SqlUtil.closeCon();
+            if(result==null||result.size()==0)
+                return 0;//学生没有退这门课
+            if(result.size()>1) {
+                return -1;//退课记录多于一条 是异常错误
+            }
+            else {
+                return 1;//学生退了这门课
+            }
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return -1;
+        }
     }
 
     @Override
@@ -75,5 +100,26 @@ public class CancelDAOImpl implements CancelDAO {
             return -1;
         }
 
+    }
+    private List<Map<String,String>> setReturn(ResultSet res) {
+        try {
+            List<Map<String,String>> result = new ArrayList<>();
+            while (res.next()) {
+                Map<String,String> map=new HashMap<>();
+                map.put("student_id",res.getString("student_id"));
+                map.put("course_id",res.getString("course_id"));
+                map.put("section_id",res.getString("section_id"));
+                map.put("semester",res.getString("semester"));
+                map.put("year",res.getString("year"));
+                result.add(map);
+
+            }
+
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return null;
+        }
     }
 }

@@ -6,6 +6,7 @@ import main.DAO.StudentDAO;
 import main.entity.Student;
 import main.util.ExcelUtil;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
@@ -28,9 +29,26 @@ public class ImportServiceImpl implements ImportService {
             for (Student s:list) {
                 studentDAO.append(s);
             }
+            return deleteExcel(path);
         }
         catch (Exception e) {e.printStackTrace();}
 
-        return 0;
+        return -1;
+    }
+    private int deleteExcel(String path) throws IOException{
+
+        try {
+            File file=new File(path);
+            if(!file.exists()) {
+                return 0;
+            } else  {
+                file.delete();
+                System.out.println("成功删除");
+                return 0;
+            }
+            
+        } catch (Exception e) {
+            throw e;
+        }
     }
 }

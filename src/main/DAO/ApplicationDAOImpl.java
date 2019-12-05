@@ -101,6 +101,31 @@ public class ApplicationDAOImpl implements ApplicationDAO {
             return null;
         }
     }
+    public int info_id(String student_id, String course_id, String section_id, String semester, String year) {
+        Connection connection=SqlUtil.createCon();
+        try
+        {
+            String sql = "select app_id from data.application where student_id =" + student_id + " AND course_id=" + course_id + " AND section_id=" + section_id + " AND semester=" + semester + " AND year=" + year;
+            PreparedStatement ppst = connection.prepareStatement(sql);
+            ResultSet res=ppst.executeQuery();
+            List<Map<String,String>> result=setReturn(res);
+            SqlUtil.closeCon();
+            if(result==null||result.size()==0)
+                return 0;
+            if(result.size()>1) {
+                return -1;
+            }
+            else {
+                return Integer.parseInt(result.get(0).get("app_id"));
+            }
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return -1;
+        }
+    }
     private List<Map<String,String>> setReturn(ResultSet res) {
         try {
             List<Map<String,String>> result = new ArrayList<>();
