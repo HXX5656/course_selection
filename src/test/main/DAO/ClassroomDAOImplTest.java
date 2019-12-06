@@ -72,6 +72,15 @@ public void testInfoList() throws Exception {
     System.out.println(classroomDAO.infoList(capacity));
 } 
 
+/**
+ * Method:Max(String room_id)
+ * */
+@Test
+public void testMax(){
+    String room_id = "9";
+    assert (classroomDAO.max(room_id).equals("100"));
+}
+
 
 /** 
 * 

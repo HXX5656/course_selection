@@ -8,6 +8,8 @@ import java.util.Map;
 public interface Sec_arrangementDAO {
     int append(Sec_arrangement sec_arrangement);
     int modify(Sec_arrangement sec_arrangement);
-    List<Map<String,String>> infoList(String time_slot_id,String room_id);
-    int delete(String time_slot_id,String room_id);
+    List<Map<String, String>> infoList(String time_slot_id, String room_id);
+    int delete(String time_slot_id, String room_id);
+    List<String> findRoom(String course_id, String section_id, String semester, String year);
+
 }

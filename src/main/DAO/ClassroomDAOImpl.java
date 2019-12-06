@@ -92,6 +92,30 @@ public class ClassroomDAOImpl implements ClassroomDAO {
         }
 
     }
+
+    public String max(String id){
+        Connection connection = SqlUtil.createCon();
+        try{
+            String sql = "select * from data.classroom where room_id='" + id +"' ";
+            PreparedStatement ppst = connection.prepareStatement(sql);
+            ResultSet res = ppst.executeQuery();
+            List<Map<String,String>> result=setReturn(res);
+            SqlUtil.closeCon();
+            if(result==null||result.size()==0)
+                return "0";
+            if(result.size()>1) {
+                return  "0";
+            }
+            else {
+                return result.get(0).get("capacity");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return null;
+        }
+    }
+
     private List<Map<String, String>> setReturn(ResultSet res) {
         try {
             List<Map<String, String>> result = new ArrayList<>();
