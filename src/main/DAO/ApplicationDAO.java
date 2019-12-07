@@ -11,5 +11,6 @@ public interface ApplicationDAO {
     int delete(String app_id);
     int modify(Application application);
     List<Map<String,String>> infoList(String app_id);
+    List<Map<String,String>> studentInfoList(String course_id,String section_id,String semester,String year);
     int info_id(String student_id, String course_id, String section_id, String semster, String year);
 }

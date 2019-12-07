@@ -72,6 +72,10 @@ public class TakesDAOImplTest {
     }
 
 
+    @Test
+    public void testStudentInfoList() throws Exception{
+        assert (takesDAO.studentInfoList("9","9","1","2020").get(0).get("student_id").equals("9"));
+    }
 
 
 } 

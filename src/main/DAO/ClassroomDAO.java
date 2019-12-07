@@ -10,4 +10,5 @@ public interface ClassroomDAO {
     int delete(String room_id);
     int modify(Classroom classroom);
     List<Map<String,String>> infoList(String capacity);
+    String max(String id);
 }

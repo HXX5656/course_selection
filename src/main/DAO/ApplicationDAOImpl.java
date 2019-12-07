@@ -101,6 +101,24 @@ public class ApplicationDAOImpl implements ApplicationDAO {
             return null;
         }
     }
+
+    @Override
+    public List<Map<String, String>> studentInfoList(String course_id,String section_id,String semester,String year) {
+        Connection connection=SqlUtil.createCon();
+        try
+        {
+            String sql="select * from data.application where course_id ="+course_id+" AND section_id="+section_id+" AND semester="+semester+" AND year="+year;
+            PreparedStatement ppst=connection.prepareStatement(sql);
+            ResultSet res=ppst.executeQuery();
+            SqlUtil.closeCon();
+            return setReturn(res);
+        } catch (Exception e) {
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return null;
+        }
+    }
+
     public int info_id(String student_id, String course_id, String section_id, String semester, String year) {
         Connection connection=SqlUtil.createCon();
         try
