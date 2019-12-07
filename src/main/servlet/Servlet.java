@@ -32,7 +32,7 @@ public class Servlet extends HttpServlet {
         System.out.println(param.toString());
         switch (req.getParameter("type")) {
             case "import":
-                ServiceFactory.getImportServiceInstance(param).importStudent();
+                ServiceFactory.getImportServiceInstance(param).import_select();
                 break;
         }
         pw.flush();

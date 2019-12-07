@@ -31,7 +31,7 @@ private ImportService importService= ServiceFactory.getImportServiceInstance(nul
 @Test
 public void testImportStudent() throws Exception { 
 
-    importService.importStudent();
+    importService.import_select();
 } 
 
 

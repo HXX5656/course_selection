@@ -105,7 +105,7 @@ public class ApplicationDAOImpl implements ApplicationDAO {
         Connection connection=SqlUtil.createCon();
         try
         {
-            String sql = "select app_id from data.application where student_id =" + student_id + " AND course_id=" + course_id + " AND section_id=" + section_id + " AND semester=" + semester + " AND year=" + year;
+            String sql = "select * from data.application where student_id =" + student_id + " AND course_id=" + course_id + " AND section_id=" + section_id + " AND semester=" + semester + " AND year=" + year;
             PreparedStatement ppst = connection.prepareStatement(sql);
             ResultSet res=ppst.executeQuery();
             List<Map<String,String>> result=setReturn(res);
