@@ -9,6 +9,9 @@ public class Classroom {
         this.capacity = capacity;
     }
 
+    public Classroom() {
+    }
+
     public String getRoom_id() {
         return room_id;
     }

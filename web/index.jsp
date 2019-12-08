@@ -36,6 +36,8 @@
     <label class="radio-inline"><input type="radio" name="optradio" value="teacher">教师</label>
     <label class="radio-inline"><input type="radio" name="optradio" value="course">课程</label>
     <label class="radio-inline"><input type="radio" name="optradio" value="grade">成绩</label>
+    <label class="radio-inline"><input type="radio" name="optradio" value="department">院系</label>
+    <label class="radio-inline"><input type="radio" name="optradio" value="classroom">教室</label>
   </div>
   <button id="uploadFile">自动导入</button>
   </body>

@@ -23,6 +23,9 @@ public class Application {
         this.year = year;
     }
 
+    public Application() {
+    }
+
     public String getApp_id() {
         return app_id;
     }

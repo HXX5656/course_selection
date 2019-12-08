@@ -17,6 +17,9 @@ public class Takes {
         this.grade = grade;
     }
 
+    public Takes() {
+    }
+
     public String getStudent_id() {
         return student_id;
     }

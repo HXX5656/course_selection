@@ -7,6 +7,7 @@ import main.util.StringUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,10 +21,14 @@ public class PaperDAOImpl implements PaperDAO {
         try {
             String sql = "INSERT  INTO `data`.`paper` (exam_id, type, time_slot_id, room_id) VALUES (?, ?, ?, ?)";
             PreparedStatement ppst = connection.prepareStatement(sql);
-            ppst.setString(1, paper.getExam_id());
-            ppst.setString(2, paper.getType());
-            ppst.setString(3, paper.getTime_slot_id());
-            ppst.setString(4, paper.getRoom_id());
+            //ppst.setString(1, paper.getExam_id());
+            StringUtil.set_string(ppst,1,paper.getExam_id(), Types.INTEGER);
+            //ppst.setString(2, paper.getType());
+            StringUtil.set_string(ppst,2,paper.getType(),Types.VARCHAR);
+            //ppst.setString(3, paper.getTime_slot_id());
+            StringUtil.set_string(ppst,3,paper.getTime_slot_id(),Types.INTEGER);
+            //ppst.setString(4, paper.getRoom_id());
+            StringUtil.set_string(ppst,4,paper.getRoom_id(),Types.INTEGER);
 
             int ret = ppst.executeUpdate();
             SqlUtil.closeCon();

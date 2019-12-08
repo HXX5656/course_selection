@@ -15,6 +15,9 @@ public class Teaches {
         this.year = year;
     }
 
+    public Teaches() {
+    }
+
     public String getTeacher_id() {
         return teacher_id;
     }

@@ -9,6 +9,9 @@ public class Essay {
         this.demand = demand;
     }
 
+    public Essay() {
+    }
+
     public String getExam_id() {
         return exam_id;
     }

@@ -14,18 +14,23 @@ import java.util.List;
 import java.util.Map;
 
 public class ExamDAOImpl implements ExamDAO {
+    //若插入成功返回exam的id值，不成功返回-1
     @Override
     public int append(Exam exam) {
         Connection connection= SqlUtil.createCon();
         try {
             String sql = "INSERT  INTO `data`.`exam` (exam_id, exam_week) VALUES (?, ?)";
-            PreparedStatement ppst = connection.prepareStatement(sql);
+            PreparedStatement ppst = connection.prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);
             ppst.setString(1, StringUtil.isEmpty(exam.getExam_id())?"0":exam.getExam_id());
             ppst.setString(2, exam.getExam_week());
-
             int ret=ppst.executeUpdate();
+            ResultSet resultSet=ppst.getGeneratedKeys();
             SqlUtil.closeCon();
-            return ret;
+            int id=0;
+            if(resultSet.next()) {
+                id=resultSet.getInt(1);
+            }
+            return ret==0?-1:id;
         } catch (Exception e) {
             e.printStackTrace();
             SqlUtil.closeCon();

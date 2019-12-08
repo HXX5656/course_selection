@@ -15,6 +15,9 @@ public class Course {
         this.department=department;
     }
 
+    public Course() {
+    }
+
     public String getCourse_id() {
         return course_id;
     }

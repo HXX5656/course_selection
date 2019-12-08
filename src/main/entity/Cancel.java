@@ -15,6 +15,9 @@ public class Cancel {
         this.year = year;
     }
 
+    public Cancel() {
+    }
+
     public String getStudent_id() {
         return student_id;
     }

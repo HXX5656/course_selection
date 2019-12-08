@@ -7,6 +7,7 @@ import main.util.StringUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,8 +20,10 @@ public class ClassroomDAOImpl implements ClassroomDAO {
         try {
             String sql = "INSERT  INTO `data`.`classroom` (room_id, capacity) VALUES (?, ?)";
             PreparedStatement ppst = connection.prepareStatement(sql);
-            ppst.setString(1, classroom.getRoom_id());
-            ppst.setString(2, classroom.getCapacity());
+            StringUtil.set_string(ppst,1,classroom.getRoom_id(), Types.INTEGER);
+            StringUtil.set_string(ppst,2,classroom.getCapacity(),Types.INTEGER);
+//            ppst.setString(1, classroom.getRoom_id());
+//            ppst.setString(2, classroom.getCapacity());
 
             int ret=ppst.executeUpdate();
             SqlUtil.closeCon();

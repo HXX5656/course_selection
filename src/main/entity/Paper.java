@@ -13,6 +13,9 @@ public class Paper {
         this.room_id = room_id;
     }
 
+    public Paper() {
+    }
+
     public String getExam_id() {
         return exam_id;
     }

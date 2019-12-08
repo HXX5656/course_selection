@@ -10,4 +10,5 @@ public interface DepartmentDAO {
     int delete(String dep_id);
     int modify(Department department);
     List<Map<String,String>> infoList(String dep_id);
+    List<Map<String, String>> info_id(String name);
 }

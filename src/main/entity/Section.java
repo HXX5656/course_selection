@@ -10,6 +10,9 @@ public class Section {
     private String max;
     private String exam_id;
 
+    public Section() {
+    }
+
     public Section(String course_id, String section_id, String semester, String year, String start, String end, String max, String exam_id) {
         this.course_id = course_id;
         this.section_id = section_id;

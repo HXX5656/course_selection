@@ -8,6 +8,8 @@ public class Sec_arrangement {
     String semester;
     String year;
 
+    public Sec_arrangement() {
+    }
 
     public Sec_arrangement(String time_slot_id, String room_id, String course_id, String section_id, String semester, String year) {
         this.time_slot_id = time_slot_id;

@@ -9,6 +9,9 @@ public class Exam {
         this.exam_week = exam_week;
     }
 
+    public Exam() {
+    }
+
     public String getExam_id() {
         return exam_id;
     }

@@ -7,6 +7,7 @@ import main.util.StringUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,12 +38,16 @@ public class TeacherDAOImpl implements TeacherDAO {
         try {
             String sql= "INSERT  INTO `data`.`teacher` (teacher_id, teacher_name, enter_time, leave_time,teacher_dep) VALUES (?, ?, ?, ?,?)";
             PreparedStatement ppst = connection.prepareStatement(sql);
-            ppst.setString(1,teacher.getTeacher_id());
-            ppst.setString(2,teacher.getTeacher_name());
-            ppst.setString(3,teacher.getEnter_time());
-            ppst.setString(4,teacher.getLeave_time());
-            ppst.setString(5,teacher.getDepartment());
-
+            ///ppst.setString(1,teacher.getTeacher_id());
+            StringUtil.set_string(ppst,1,teacher.getTeacher_id(), Types.INTEGER);
+            //ppst.setString(2,teacher.getTeacher_name());
+            StringUtil.set_string(ppst,2,teacher.getTeacher_name(),Types.VARCHAR);
+            //ppst.setString(3,teacher.getEnter_time());
+            //ppst.setString(4,teacher.getLeave_time());
+            //ppst.setString(5,teacher.getDepartment());
+            StringUtil.set_string(ppst,3,teacher.getEnter_time(),Types.DATE);
+            StringUtil.set_string(ppst,4,teacher.getLeave_time(),Types.DATE);
+            StringUtil.set_string(ppst,5,teacher.getDepartment(),Types.INTEGER);
             int ret=ppst.executeUpdate();
             SqlUtil.closeCon();
             return ret;

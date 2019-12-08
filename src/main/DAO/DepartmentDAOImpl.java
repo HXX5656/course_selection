@@ -56,6 +56,22 @@ public class DepartmentDAOImpl implements DepartmentDAO {
             return null;
         }
     }
+
+    @Override
+    public List<Map<String, String>> info_id(String name) {
+        Connection connection= SqlUtil.createCon();
+        try {
+            String sql="select * from data.department where dep_name ='"+name+"'";
+            PreparedStatement ppst=connection.prepareStatement(sql);
+            ResultSet res=ppst.executeQuery();
+            SqlUtil.closeCon();
+            return setReturn(res);
+        } catch (Exception e) {
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return null;
+        }
+    }
     private List<Map<String,String>> setReturn(ResultSet res) {
         try {
             List<Map<String,String>> result = new ArrayList<>();

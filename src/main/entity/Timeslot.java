@@ -15,6 +15,9 @@ public class Timeslot {
         this.day_of_week = day_of_week;
     }
 
+    public Timeslot() {
+    }
+
     public Timeslot(String start_time, String end_time, String day_of_week) {
         this.start_time = start_time;
         this.end_time = end_time;

@@ -4,6 +4,9 @@ public class Department {
     private String dep_id;
     private String dep_name;
 
+    public Department() {
+    }
+
     public Department(String dep_id, String dep_name) {
         this.dep_id = dep_id;
         this.dep_name = dep_name;

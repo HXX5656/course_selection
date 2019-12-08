@@ -15,6 +15,9 @@ public class Teacher {
         this.department = department;
     }
 
+    public Teacher() {
+    }
+
     public String getTeacher_id() {
         return teacher_id;
     }

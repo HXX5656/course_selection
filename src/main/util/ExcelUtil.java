@@ -6,6 +6,7 @@ package main.util;
 
 
 
+import com.google.gson.JsonObject;
 import org.apache.poi.hssf.usermodel.examples.CellTypes;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -46,25 +47,7 @@ public class ExcelUtil {
                     XSSFCell cell = row.getCell(j);
                     if (cell == null)
                         continue;
-                    //很重要的一行代码,如果不加,像12345这样的数字是不会给你转成String的,只会给你转成double,而且会导致cell.getStringCellValue()报错
-                    String cellContent="";
-                    switch (cell.getCellType()) {
-                        case XSSFCell.CELL_TYPE_STRING:
-                            cellContent=cell.getStringCellValue();
-                            break;
-                        case XSSFCell.CELL_TYPE_NUMERIC:
-                            if(DateUtil.isCellDateFormatted(cell)) {
-                                cellContent= DateFormat.getDateInstance().format(cell.getDateCellValue())+"";
-                            }
-                            else  {
-                            cellContent=cell.getNumericCellValue()+"";
-                            }
-                            break;
-                         default:
-                             cellContent=cell.getStringCellValue();
-                             break;
-
-                    }
+                    String cellContent=read_cell(cell);
                     //cellContent = "".equals(cellContent) ? "0" : cellContent;
                     if (type.equals(String.class)) {
                         field.set(parseObject, cellContent);
@@ -96,5 +79,65 @@ public class ExcelUtil {
             e.printStackTrace();
         }
         return result;
+    }
+    public static List<JsonObject> parseJson(String path) {
+        List<JsonObject> result=new ArrayList<>();
+        try {
+            FileInputStream fis=new FileInputStream(path);
+            XSSFWorkbook workbook= new XSSFWorkbook(fis);
+            XSSFSheet sheet=workbook.getSheetAt(0);
+            List<String> properties=new ArrayList<>();
+
+            int lastRow=sheet.getLastRowNum();
+            int columnNum=sheet.getRow(1).getPhysicalNumberOfCells();
+            XSSFRow attributes=sheet.getRow(1);
+            for (int i=0;i<columnNum;i++) {
+                XSSFCell cell=attributes.getCell(i);
+                cell.setCellType(XSSFCell.CELL_TYPE_STRING);
+                properties.add(cell.getStringCellValue());
+            }
+            for (int i = 2; i <=lastRow ; i++) {
+                XSSFRow row = sheet.getRow(i);
+                JsonObject jsonObject=new JsonObject();
+                for (int j = 0; j < columnNum; j++) {
+                    //第j列
+                    XSSFCell cell = row.getCell(j);
+                    if (cell == null)
+                        continue;
+                    String cellContent=read_cell(cell);
+                    jsonObject.addProperty(properties.get(j),cellContent);
+                    //cellContent = "".equals(cellContent) ? "0" : cellContent;
+
+
+
+                }
+                result.add(jsonObject);
+            }
+            fis.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+    private static String read_cell(XSSFCell cell) {
+        String cellContent="";
+        switch (cell.getCellType()) {
+            case XSSFCell.CELL_TYPE_STRING:
+                cellContent=cell.getStringCellValue();
+                break;
+            case XSSFCell.CELL_TYPE_NUMERIC:
+                if(DateUtil.isCellDateFormatted(cell)) {
+                    cellContent= DateFormat.getDateInstance().format(cell.getDateCellValue())+"";
+                }
+                else  {
+                    cellContent=cell.getNumericCellValue()+"";
+                }
+                break;
+            default:
+                cellContent=cell.getStringCellValue();
+                break;
+
+        }
+        return cellContent;
     }
 }
