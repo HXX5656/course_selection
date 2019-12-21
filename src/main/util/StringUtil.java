@@ -30,6 +30,19 @@ public class StringUtil {
         result.put("section_id",code.substring(9,11));
         return result;
     }
+    public static String parse_idNumber(String id,boolean isTeacher) {
+        String number=id;
+        if(number.length()<6) {
+            int delta = 6 - number.length();
+            StringBuilder tmp=new StringBuilder("");
+            for (int i = 0; i < delta; i++) {
+                tmp.append("0");
+            }
+            number=tmp+number;
+        }
+        number=(isTeacher?"T"+number:"S"+number);
+        return number;
+    }
 
     /*课程设置
     * 参照复旦大学 本科生 上课表

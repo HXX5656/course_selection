@@ -63,7 +63,7 @@ public class SectionDAOImplTest {
     @Test
     public void testDelete() throws Exception {
         String course_id = "1";
-        String section_id = "1";
+        String section_id = "2";
         String semester = "2";
         String year = "2019";
         assert (1 == sectionDAO.delete(course_id, section_id, semester, year));

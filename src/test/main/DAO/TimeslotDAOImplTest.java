@@ -3,6 +3,7 @@ package test.main.DAO;
 import main.DAO.DAOFactory;
 import main.DAO.TimeslotDAO;
 import main.entity.Timeslot;
+import main.util.StringUtil;
 import org.junit.Test;
 import org.junit.Before; 
 import org.junit.After; 
@@ -33,8 +34,35 @@ private static TimeslotDAO timeslotDAO = DAOFactory.getTimeslotDAOInstance();
 */ 
 @Test
 public void testAppend() throws Exception {
-    Timeslot timeslot = new Timeslot("8","9","2");
-    assert (1 == timeslotDAO.append(timeslot));
+//    for (int i = 1; i <=7; i++) {
+//        for (int j = 1; j <=13 ; j++) {
+//            Timeslot timeslot=new Timeslot(StringUtil.getStart(j),StringUtil.getEnd(j),i+"");
+//            timeslotDAO.append(timeslot);
+//        }
+//    }
+    String day="7";
+    String start="";
+    String end="";
+    for (int i=1;i<=5;i++) {
+        if(i==1) {
+            start="0800";
+            end="1000";
+        } else if(i==2) {
+            start="1030";
+            end="1230";
+        } else if(i==3) {
+            start="1330";
+            end="1530";
+        }else if(i==4) {
+            start="1600";
+            end="1800";
+        } else  {
+            start="1830";
+            end="2030";
+        }
+        Timeslot timeslot=new Timeslot(start,end,day);
+        timeslotDAO.append(timeslot);
+    }
 } 
 
 /** 
@@ -66,7 +94,7 @@ public void testInfoList() throws Exception {
 */ 
 @Test
 public void testDelete() throws Exception { 
-    String time_id = "4";
+    String time_id = "3";
     assert (1 == timeslotDAO.delete(time_id));
 } 
 

@@ -3,8 +3,10 @@ package main.service;
 import com.google.gson.JsonObject;
 import main.DAO.*;
 import main.entity.*;
+import main.util.EncryptUtil;
 import main.util.ExcelUtil;
 import main.util.StringUtil;
+import org.apache.poi.ss.formula.functions.T;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,6 +29,7 @@ public class ImportServiceImpl implements ImportService {
     private PaperDAO paperDAO;
     private EssayDAO essayDAO;
     private ClassroomDAO classroomDAO;
+    private AccountDAO accountDAO;
     public ImportServiceImpl(JsonObject param) {
         this.jsonObject=param;
         this.studentDAO= DAOFactory.getStudentDAOInstance();
@@ -42,6 +45,7 @@ public class ImportServiceImpl implements ImportService {
         this.paperDAO=DAOFactory.getPaperDAOInstance();
         this.essayDAO=DAOFactory.getEssayDAOInstance();
         this.classroomDAO=DAOFactory.getClassroomDAOInstance();
+        this.accountDAO=DAOFactory.getAccountDAOInstance();
     }
     @Override
     public int import_select() throws IOException {
@@ -72,7 +76,8 @@ public class ImportServiceImpl implements ImportService {
             for (Student s:list) {
                 studentDAO.append(s);
             }
-            return deleteExcel(path);
+            deleteExcel(path);
+            return auto_import_account(list);
         }
         catch (Exception e) {e.printStackTrace();}
 
@@ -84,7 +89,40 @@ public class ImportServiceImpl implements ImportService {
             for (Teacher teacher:teachers) {
                 teacherDAO.append(teacher);
             }
-            return deleteExcel(path);
+            deleteExcel(path);
+            return auto_import_teacher(teachers);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+    private int auto_import_teacher(List<Teacher> objects) {
+        try {
+
+            for (Teacher t:objects){
+                String id = ((int)Float.parseFloat(t.getTeacher_id()))+"";
+                id=StringUtil.parse_idNumber(id,true);
+                String pwd_tmp = "12345678";//初始密码
+                Account account = new Account(id, EncryptUtil.md5(id,pwd_tmp));
+                accountDAO.append(account);
+            }
+            return 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+    private int auto_import_account(List<Student> objects) {
+        try {
+
+            for (Student t:objects){
+                String id = ((int)Float.parseFloat(t.getStudent_id()))+"";
+                id=StringUtil.parse_idNumber(id,false);
+                String pwd_tmp = "12345";//初始密码
+                Account account = new Account(id, EncryptUtil.md5(id,pwd_tmp));
+                accountDAO.append(account);
+            }
+            return 0;
         } catch (Exception e) {
             e.printStackTrace();
         }

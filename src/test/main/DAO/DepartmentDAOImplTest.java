@@ -32,7 +32,7 @@ private DepartmentDAO departmentDAO= DAOFactory.getDepartmentDAOInstance();
 @Test
 public void testAppend() throws Exception {
 
-    Department department=new Department("3","SE");
+    Department department=new Department("22","MT");
     assert (1==departmentDAO.append(department));
 } 
 

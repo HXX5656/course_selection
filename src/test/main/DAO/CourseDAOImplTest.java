@@ -43,7 +43,7 @@ public void testAppend() throws Exception {
 @Test
 public void testDelete() throws Exception { 
 
-    String course_id="4";
+    String course_id="1";
     assert (1==courseDAO.delete(course_id));
 } 
 

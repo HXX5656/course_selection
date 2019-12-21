@@ -19,6 +19,7 @@
           <element id="library" level="project" name="mysql-connector-java-8.0.18" />
           <element id="library" level="project" name="poi-3.9-20121203" />
           <element id="library" level="project" name="xmlbeans-2.6.0" />
+          <element id="library" level="project" name="commons-codec-1.10" />
         </element>
       </element>
     </root>

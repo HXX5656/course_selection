@@ -45,7 +45,7 @@ public void testAppend() throws Exception {
 @Test
 public void testDelete() throws Exception { 
 
-    String exam_id="1";
+    String exam_id="2";
     assert (1==examDAO.delete(exam_id));
 } 
 

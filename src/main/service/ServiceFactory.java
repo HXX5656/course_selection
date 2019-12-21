@@ -9,4 +9,5 @@ public class ServiceFactory {
     public static CourseService getCourseServiceInstance(JsonObject param) {
         return new CourseServiceImpl(param);
     }
+    public static LoginService getLoginServiceInstance(JsonObject param) {return new LoginServiceImpl(param);}
 }

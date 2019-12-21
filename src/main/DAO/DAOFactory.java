@@ -28,6 +28,7 @@ public class DAOFactory {
     public static Sec_arrangementDAO getSecArrangementDAOInstance(){return  new Sec_arrangementDAOImpl();}
     public static PaperDAO getPaperDAOInstance(){return new PaperDAOImpl();}
     public static ExamDAO getExamDAOInstance() {return new ExamDAOImpl();}
-    public static ApplicationDAO getApplicationDAOInstance() {return new ApplicationDAOImpl();
+    public static ApplicationDAO getApplicationDAOInstance() {return new ApplicationDAOImpl();}
+    public static AccountDAO getAccountDAOInstance(){return new AccountDAOImpl();
     }
 }

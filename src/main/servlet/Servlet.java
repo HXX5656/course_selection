@@ -24,6 +24,7 @@ public class Servlet extends HttpServlet {
         System.out.println("total get");
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json");
         PrintWriter pw=resp.getWriter();
         JsonObject param=new JsonObject();
         Map<String,String[]> input=req.getParameterMap();
@@ -33,6 +34,9 @@ public class Servlet extends HttpServlet {
         switch (req.getParameter("type")) {
             case "import":
                 ServiceFactory.getImportServiceInstance(param).import_select();
+                break;
+            case "login":
+                pw.print(ServiceFactory.getLoginServiceInstance(param).login());
                 break;
         }
         pw.flush();
