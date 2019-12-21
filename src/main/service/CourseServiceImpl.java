@@ -114,6 +114,10 @@ public class CourseServiceImpl implements CourseService {
             return 0;
         }
 
+        if(isRoomMax()){
+            return 0;
+        }
+
         application.setStatus("1");
         int applied = applicationDAO.modify(application);
         int taken = select_or_cancel();
