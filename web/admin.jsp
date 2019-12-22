@@ -31,13 +31,10 @@
     <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="#">教师</a>
+                <a class="nav-link" href="logout.jsp">登出</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">学生</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">管理员</a>
+                <a class="nav-link" href="index.jsp">修改密码</a>
             </li>
         </ul>
     </div>
@@ -48,7 +45,7 @@
 <form id="uploadForm" action="" method="post" enctype="multipart/form-data">
     <table>
         <tr>
-            <td>管理员界面</td>
+            <td>界面</td>
             <td>
                 <input type="file" name="fileName" id="fileName"/>
             </td>
@@ -62,6 +59,9 @@
     <label class="radio-inline"><input type="radio" name="optradio" value="grade">成绩</label>
     <label class="radio-inline"><input type="radio" name="optradio" value="department">院系</label>
     <label class="radio-inline"><input type="radio" name="optradio" value="classroom">教室</label>
+    <input type="text" placeholder="course_code" id="codes"><input type="text" placeholder="teacher_id" id="tea_id">
+    <input type="text" placeholder="student_id" id="code_stu_id"><input type="text" placeholder="grade" id="grade">
+    <button type="button" id="sss" onclick="grade_sub()">手动登分</button>
 </div>
 <button id="uploadFile">自动导入</button>
 </div>
@@ -83,11 +83,53 @@
             <input type="text" id="semester" placeholder="1为春季学期，2为秋季学期"><input type="text" id="year" placeholder="学年">
             <button type="button" id="change" onclick="submit()">提交</button>
     </div>
+    </div>
+    <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#cancel">删除课程</button>
+    <div id = "cancel" class="collapse">
+        <div id="cancel_box"><input type='text' id='cal_code' placeholder="course_code:">
+            <button type="button" id="cancel_course" onclick="cancel()">删除课程</button>
+        </div>
+    </div>
 </div>
 </body>
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="http://malsup.github.io/jquery.form.js"></script>
 <script type="text/javascript">
+    function cancel() {
+        var cou_code = $("#cal_code").val();
+        $.ajax({
+            url:"/Servlet",
+            type:"post",
+            data:{"type":"delete","course_code":cou_code},
+            success:function(data){
+                if(data == "-2")
+                    alert(" 当前不可以删课");
+                else  if (data=="-1")
+                    alert("操作失败");
+                else
+                    alert("操作成功");
+            }
+        });
+    }
+    function grade_sub() {
+        var c_code = $("#codes").val();
+        var teacher_id = $("#tea_id").val();
+        var student_id = $("#code_stu_id").val();
+        var grade = $("#grade").val();
+        $.ajax({
+            url:"/Servlet",
+            type:"post",
+            data:{"type":"add_grade","course_code":c_code,"teacher_id":teacher_id,"student_id":student_id,"grade":grade},
+            success:function(data){
+                if(data == "-2")
+                    alert("数据冲突，插入失败");
+                else  if (data=="-1")
+                    alert("操作失败");
+                else
+                    alert("操作成功");
+            }
+        });
+    }
     function submit() {
         var canSelect = $("#canSelect").val();
         var canDelete = $("#canDelete").val();
@@ -201,11 +243,12 @@
                     "time-place":time_place,"hours":hours,"max":max,"exam_time":exam_time,"exam_type":exam_type},
                     dataType:"text",
                     success:function(data) {
-                        if(data == "0") {
-                            alert("操作成功");
-                        } else {
+                        if(data == "-2")
+                            alert("数据冲突，插入失败");
+                        else  if (data=="-1")
                             alert("操作失败");
-                        }
+                        else
+                            alert("操作成功");
                     }
                 });
         }
@@ -313,12 +356,19 @@
     });
     function importExcel(filePath){
         var name=$("input:radio:checked").val();
+        var c_code = $("#codes").val();
+        var teacher_id = $("#tea_id").val();
         $.ajax({
             url:"/Servlet",
             type:"post",
-            data:{"filePath":filePath,"type":"import","name":name},
+            data:{"filePath":filePath,"type":"import","name":name,"course_code":c_code,"teacher_id":teacher_id},
             success:function(data){
-                alert("okk");
+                if(data == "-2")
+                    alert("数据冲突，插入失败");
+                else  if (data=="-1")
+                    alert("操作失败");
+                else
+                    alert("操作成功");
             }
         });
     }

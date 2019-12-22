@@ -92,6 +92,18 @@ public class Servlet extends HttpServlet {
             case "status":
                 pw.print(ServiceFactory.getImportServiceInstance(param).change_status());
                 break;
+            case "my_exam":
+                pw.print(ServiceFactory.getUserServiceInstance(param).get_student_exam());
+                break;
+            case "add_grade":
+                pw.print(ServiceFactory.getImportServiceInstance(param).add_grade(param));
+                break;
+            case "delete":
+                pw.print(ServiceFactory.getCourseServiceInstance(param).delete_section());
+                break;
+            case "modify":
+                pw.print(ServiceFactory.getLoginServiceInstance(param).modify());
+                break;
         }
         pw.flush();
         pw.close();

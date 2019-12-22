@@ -23,13 +23,10 @@
     <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="#">教师</a>
+                <a class="nav-link" href="logout.jsp">登出</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">学生</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">管理员</a>
+                <a class="nav-link" href="index.jsp">修改密码</a>
             </li>
         </ul>
     </div>
@@ -55,6 +52,9 @@
     </div>
     <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#app">我的申请</button>
     <div  id="app"  class="collapse">
+    </div>
+    <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#exam">我的考试</button>
+    <div  id="exam"  class="collapse">
     </div>
 
 </div>
@@ -98,6 +98,33 @@
                 getApplicationLists(data);
             }
         });
+        $.ajax({
+            url:"/Servlet",
+            type:"post",
+            async:false,
+            data:{"type":"my_exam","student_id":sessionStorage.getItem("userID")},
+            dataType:"json",
+            success:function(data) {
+                getExamLists(data);
+            }
+        });
+
+    }
+    function getExamLists(data) {
+        var len = Object.keys(data).length;
+        var html = "<tr><th>考试码</th><th>考试类型</th><th>详情</th></tr>";
+        for (var i=0;i<len;i++) {
+            var tmp1 = "";
+            var tmp = data[i+""];
+            tmp1+="<td>"+tmp["exam_id"]+"</td><td>"+tmp["type"]
+                +"</td><td>"+tmp["value"]+"</td>";
+            // tmp+="<td><button type='button' class='access' value='"+key+"' "+(canBeDone?"":"disabled")+">同意</button></td>";
+            // tmp+="<td><button type='button' class='refuse' value='"+key+"' "+(canBeDone?"":"disabled")+">驳回</button></td>";
+            tmp1 = "<tr>"+tmp1+"</tr>";
+            html+=tmp1;
+        }
+        html="<table border=\"1px\" cellspacing=\"0px\" style=\"border-collapse:collapse\">"+html+"</table>";
+        $("#exam").append(html);
     }
     function getCourseTable(data) {
         alert(JSON.stringify(data));
@@ -109,7 +136,7 @@
         var total_grade_son = 0;
         $("#name").html($("#name").html()+data["student_name"]);
         var html = "<tr><th>课程代码</th><th>课程名称</th><th>课程学分</th><th>课时安排</th><th>上课学期</th><th>选课人数</th><th>成绩</th></tr>";
-        for (var i = 0;i<len;i++) {
+        for (var i = 0;i<len - 1;i++) {
             var item = json[i+""];
             var tmp = "";
             tmp += "<td>"+item["course_code"]+"</td><td>"+item["course_name"]+"</td><td>"+item["course_credit"]+"</td><td>";

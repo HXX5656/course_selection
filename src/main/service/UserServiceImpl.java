@@ -19,6 +19,9 @@ public class UserServiceImpl implements UserService {
     private StudentDAO studentDAO;
     private TeacherDAO teacherDAO;
     private ApplicationDAO applicationDAO;
+    private PaperDAO paperDAO;
+    private EssayDAO essayDAO;
+    private TimeslotDAO timeslotDAO;
 
     public UserServiceImpl(JsonObject jsonObject) {
         this.jsonObject = jsonObject;
@@ -30,6 +33,42 @@ public class UserServiceImpl implements UserService {
         this.studentDAO = DAOFactory.getStudentDAOInstance();
         this.teacherDAO = DAOFactory.getTeacherDAOInstance();
         this.applicationDAO = DAOFactory.getApplicationDAOInstance();
+        this.paperDAO = DAOFactory.getPaperDAOInstance();
+        this.essayDAO = DAOFactory.getEssayDAOInstance();
+        this.timeslotDAO = DAOFactory.getTimeslotDAOInstance();
+    }
+    @Override
+    public JsonObject get_student_exam(){
+        JsonObject json = new JsonObject();
+        String s_id = jsonObject.get("student_id").getAsString();
+        JsonObject datas = get_student_courseInfo();
+        for(int i = 0; i < datas.size() - 1;i ++){
+            JsonObject temp = datas.getAsJsonObject(""+i);
+            JsonObject j = new JsonObject();
+            List<Map<String,String>> list =  sectionDAO.infoList(temp.get("course_id").getAsString(),temp.get("section_id").getAsString(),temp.get("semester").getAsString(),temp.get("year").getAsString());
+            j.addProperty("exam_id",list.get(0).get("exam_id"));
+            String id = j.get("exam_id").getAsString();
+            String type = "";
+            String value = "";
+            if(paperDAO.infoList(id).size()>0){
+                type="笔试";
+                String time_id = paperDAO.infoList(id).get(0).get("time_slot_id");
+                String room_id = paperDAO.infoList(id).get(0).get("room_id");
+                Map<String,String> time = timeslotDAO.infoList(time_id).get(0);
+                int day = (Integer.parseInt(time_id) - 96)/5 + 1;
+                String start=time.get("start_time");
+                String end = time.get("end_time");
+                value="周"+day+" "+start+"-"+end+" H"+room_id+";";
+            } else {
+                type = "论文";
+                value = essayDAO.infoList(id).get(0).get("demand");
+            }
+            j.addProperty("type",type);
+            j.addProperty("value",value);
+            json.add(i+"",j);
+        }
+        return json;
+
     }
     @Override
     public JsonObject get_student_courseInfo() {

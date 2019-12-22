@@ -347,10 +347,14 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public int delete_section(){
-        String course_id = jsonObject.get("course_id").getAsString();
-        String section_id = jsonObject.get("section_id").getAsString();
-        String semester = jsonObject.get("semester").getAsString();
-        String year = jsonObject.get("year").getAsString();
+        if(!TimeControlService.getInstance().isCanDelete())
+            return -2;
+        String course_code = jsonObject.get("course_code").getAsString();
+        Map<String,String> codes = StringUtil.parse_course_code(course_code);
+        String course_id = codes.get("course_id");
+        String section_id =codes.get("section_id");
+        String semester = TimeControlService.getInstance().getSemester()+"";
+        String year = TimeControlService.getInstance().getYear()+"";
         SectionDAO sectionDAO = DAOFactory.getSectionDAOInstance();
         List<Map<String,String>> infoList = sectionDAO.infoList(course_id,section_id,semester,year);
         if (infoList.size() == 0){//开课不存在就返回0

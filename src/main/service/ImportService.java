@@ -10,4 +10,5 @@ public interface ImportService {
     int add_student();
     int addCourse(JsonObject jsonObject)throws IOException;
     int change_status();
+    int add_grade(JsonObject json);
 }

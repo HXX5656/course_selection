@@ -86,6 +86,21 @@ public class TeachesDAOImpl implements TeachesDAO {
             return null;
         }
     }
+    @Override
+    public List<Map<String, String>> infoList(String teacher_id) {
+        Connection connection = SqlUtil.createCon();
+        try {
+            String sql = "select * from data.teaches where teacher_id ='" + teacher_id + "'" ;
+            PreparedStatement ppst = connection.prepareStatement(sql);
+            ResultSet res = ppst.executeQuery();
+            SqlUtil.closeCon();
+            return setReturn(res);
+        } catch (Exception e) {
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return null;
+        }
+    }
 
     private List<Map<String, String>> setReturn(ResultSet res) {
         try {

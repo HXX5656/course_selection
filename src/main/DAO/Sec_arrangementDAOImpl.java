@@ -81,7 +81,22 @@ public class Sec_arrangementDAOImpl implements Sec_arrangementDAO {
             return null;
         }
     }
-
+    @Override
+    public List<Map<String, String>> infoList(String time_slot_id, String course_id,String section_id,String semester,String year) {
+        Connection connection = SqlUtil.createCon();
+        try {
+            String sql = "select * from data.sec_arrangement where time_slot_id=" + time_slot_id + " AND course_id=" +course_id+
+                    " AND section_id="+section_id+" AND semester="+semester+" AND year='"+year+"'";
+            PreparedStatement ppst = connection.prepareStatement(sql);
+            ResultSet res = ppst.executeQuery();
+            SqlUtil.closeCon();
+            return setReturn(res);
+        } catch (Exception e) {
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return null;
+        }
+    }
     @Override
     public int delete(String time_slot_id, String room_id) {
         Connection connection = SqlUtil.createCon();

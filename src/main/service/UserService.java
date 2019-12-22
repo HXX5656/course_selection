@@ -12,4 +12,5 @@ public interface UserService {
     JsonObject generate_teachers();
     JsonObject generate_students();
     JsonObject generate_courses();
+    JsonObject get_student_exam();
 }

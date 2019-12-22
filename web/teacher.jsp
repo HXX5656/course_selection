@@ -23,13 +23,10 @@
     <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="#">教师</a>
+                <a class="nav-link" href="logout.jsp">登出</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">学生</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">管理员</a>
+                <a class="nav-link" href="index.jsp">修改密码</a>
             </li>
         </ul>
     </div>
@@ -59,6 +56,23 @@
         </div>
         <div class="container" id="stu_table">
         </div>
+    </div>
+    <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#import">一键登分</button>
+    <div id = "import" class="collapse">
+        <form id="uploadForm" action="" method="post" enctype="multipart/form-data">
+            <table>
+                <tr>
+                    <td>界面</td>
+                    <td>
+                        <input type="file" name="fileName" id="fileName"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <div class="container">
+            <input type="text" placeholder="course_code:" id="codes">
+        </div>
+        <button id="uploadFile">自动导入</button>
     </div>
 
 
@@ -236,6 +250,48 @@
         }
         html="<table border=\"1px\" cellspacing=\"0px\" style=\"border-collapse:collapse\">"+html+"</table>";
         $("#stu_table").append(html);
+    }
+    $("#uploadFile").click(function test2() {
+        var form = new FormData(document.getElementById("uploadForm"));
+        $.ajax({
+            contentType:"multipart/form-data",
+            url:"/UploadHandleServlet",
+            type:"post",
+            async:false,
+            data:form,
+            dataType:"json",
+            processData: false,  // 告诉jQuery不要去处理发送的数据
+            contentType: false,   // 告诉jQuery不要去设置Content-Type请求头
+            success:function(data) {
+                var result = eval(data);
+                var filePath = result[0].filePath;
+                //alert(filePath);
+                //var fileName = result[0].imageName;
+                //$("#download").attr("href", "servlet/DownLoadServlet?filePath=" + filePath);
+                //document.getElementById("download").innerHTML = fileName;
+
+                //上传文件后得到路径，然后处理数据插入数据库表中
+                importExcel(filePath);
+            }
+        });
+    });
+    function importExcel(filePath){
+        var name="grade";
+        var c_code = $("#codes").val();
+        var teacher_id = sessionStorage.getItem("userID");
+        $.ajax({
+            url:"/Servlet",
+            type:"post",
+            data:{"filePath":filePath,"type":"import","name":name,"course_code":c_code,"teacher_id":teacher_id},
+            success:function(data){
+                if(data == "-2")
+                    alert("数据冲突，插入失败");
+                else  if (data=="-1")
+                    alert("操作失败");
+                else
+                    alert("操作成功");
+            }
+        });
     }
 </script>
 </html>

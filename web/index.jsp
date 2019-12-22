@@ -28,7 +28,6 @@
       <input type="password" id="password" />
     </div>
     <button id="btn" type="button">登录</button>
-    <a href="admin.jsp">管理员</a>
   </form>
 
 
@@ -39,40 +38,80 @@
   <script type="text/javascript" src="http://malsup.github.io/jquery.form.js"></script>
   <script type="text/javascript">
     // 使用ajax的jquery传数据，url、type、dataType都与这个相同，data里是传进去的json数据，type是servlet用来判断的类型
-    $("#btn").click(function login() {
-        var usrname = $("#username").val();
-        var pwd = $("#password").val();
-        $.ajax({
-            url:"/Servlet",
-            type:"post",
-            async:false,
-            data:{"account":usrname,"password":pwd, "type":"login"},
-            dataType:"json",
-            success:function(data) {
-                // var filePath = result[0].filePath;
-                var status = data["result"];
-                alert(status);
-                var success = data["success"];
-                if (success) {
-                    var role = "admin.jsp";
-                    if(usrname.substr(0,1) === "S") {
-                        usrname=usrname.substr(1);
-                        alert(usrname);
-                        role = "student.jsp";
-                    }
-                    if (usrname.substr(0,1) === "T") {
-                        usrname=usrname.substr(1);
-                        alert(usrname);
-                        role = "teacher.jsp";
-                    }
-                    sessionStorage.setItem("userID",usrname);
-                    sessionStorage.setItem("role",""+role);
+    if(sessionStorage.getItem("userID") === "" || sessionStorage.getItem("userID") === null){
+        $("#btn").html("登录");
+        $("#btn").click(function login() {
+            var usrname = $("#username").val();
+            var pwd = $("#password").val();
+            $.ajax({
+                url:"/Servlet",
+                type:"post",
+                async:false,
+                data:{"account":usrname,"password":pwd, "type":"login"},
+                dataType:"json",
+                success:function(data) {
+                    // var filePath = result[0].filePath;
+                    var status = data["result"];
+                    alert(status);
+                    var success = data["success"];
+                    if (success) {
+                        var role = "admin.jsp";
+                        if(usrname.substr(0,1) === "S") {
+                            usrname=usrname.substr(1);
+                            alert(usrname);
+                            role = "student.jsp";
+                        }
+                        if (usrname.substr(0,1) === "T") {
+                            usrname=usrname.substr(1);
+                            alert(usrname);
+                            role = "teacher.jsp";
+                        }
+                        sessionStorage.setItem("userID",usrname);
+                        sessionStorage.setItem("role",""+role);
 
-                    $(location).attr("href",role);
+                        $(location).attr("href",role);
+                    }
                 }
-            }
+            });
         });
-    });
+    } else {
+        $("#btn").html("修改密码");
+        $("#btn").click(function () {
+            var usrname = $("#username").val();
+            var pwd = $("#password").val();
+            $.ajax({
+                url:"/Servlet",
+                type:"post",
+                async:false,
+                data:{"account":usrname,"password":pwd, "type":"modify"},
+                dataType:"json",
+                success:function(data) {
+                    // var filePath = result[0].filePath;
+                    var status = data["result"];
+                    alert(status);
+                    var success = data["success"];
+                    if (success) {
+                        // var role = "admin.jsp";
+                        // if(usrname.substr(0,1) === "S") {
+                        //     usrname=usrname.substr(1);
+                        //     alert(usrname);
+                        //     role = "student.jsp";
+                        // }
+                        // if (usrname.substr(0,1) === "T") {
+                        //     usrname=usrname.substr(1);
+                        //     alert(usrname);
+                        //     role = "teacher.jsp";
+                        // }
+                        // sessionStorage.setItem("userID",usrname);
+                        // sessionStorage.setItem("role",""+role);
+
+                        $(location).attr("href",sessionStorage.getItem("role"));
+                    }
+                }
+            });
+        });
+    }
+
   </script>
 
 </html>

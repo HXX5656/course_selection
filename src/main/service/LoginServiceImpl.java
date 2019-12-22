@@ -3,6 +3,7 @@ package main.service;
 import com.google.gson.JsonObject;
 import main.DAO.AccountDAO;
 import main.DAO.DAOFactory;
+import main.entity.Account;
 import main.util.EncryptUtil;
 
 public class LoginServiceImpl implements LoginService {
@@ -30,6 +31,25 @@ public class LoginServiceImpl implements LoginService {
                 result = "密码错误，请重新输入";
                 ret.addProperty("success",false);
             }
+            ret.addProperty("result",result);
+        }
+        return ret;
+
+    }
+    @Override
+    public JsonObject modify() {
+        JsonObject ret = new JsonObject();
+        String usrname=jsonObject.get("account").getAsString();
+        String pwd_input=jsonObject.get("password").getAsString();
+        String pwd=accountDAO.infoList(usrname);
+        if(pwd == null) {
+            ret.addProperty("result","没有这个账户，请重新输入");
+            ret.addProperty("success",false);
+        }else {
+            String after = EncryptUtil.md5(usrname,pwd_input);
+            accountDAO.modify(new Account(usrname,after));
+            String result="您已成功修改密码";
+            ret.addProperty("success",true);
             ret.addProperty("result",result);
         }
         return ret;

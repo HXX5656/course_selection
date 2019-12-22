@@ -14,5 +14,6 @@ public interface Sec_arrangementDAO {
     int delete_by_section(String course_id,String section_id,String semster,String year);
     int find_time(String course_id,String section_id,String semster,String year);
     List<Map<String,String>> getArrangements(String course_id, String section_id, String semester, String year);
+    List<Map<String, String>> infoList(String time_slot_id, String course_id,String section_id,String semester,String year);
 
     }

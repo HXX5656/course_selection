@@ -31,6 +31,7 @@ public class ImportServiceImpl implements ImportService {
     private EssayDAO essayDAO;
     private ClassroomDAO classroomDAO;
     private AccountDAO accountDAO;
+    private TakesDAO takesDAO;
     public ImportServiceImpl(JsonObject param) {
         this.jsonObject=param;
         this.studentDAO= DAOFactory.getStudentDAOInstance();
@@ -47,6 +48,7 @@ public class ImportServiceImpl implements ImportService {
         this.essayDAO=DAOFactory.getEssayDAOInstance();
         this.classroomDAO=DAOFactory.getClassroomDAOInstance();
         this.accountDAO=DAOFactory.getAccountDAOInstance();
+        this.takesDAO = DAOFactory.getTakesDAOInstance();
     }
     @Override
     public int import_select() throws IOException {
@@ -197,17 +199,21 @@ public class ImportServiceImpl implements ImportService {
         return -1;
     }
     private int importCourse(String path) throws IOException {
+        int result = 0;
         try {
             List<JsonObject> courses=ExcelUtil.parseJson(path);
             for (JsonObject json:courses) {
-                addCourse(json);
+                int tmp = addCourse(json);
+                if (tmp < 0)
+                    result = tmp;
             }
+            deleteExcel(path);
 
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
         }
-        return 0;
+        return result;
     }
     public int change_status() {
         String select = jsonObject.get("select").getAsString();
@@ -239,6 +245,37 @@ public class ImportServiceImpl implements ImportService {
             String arrangement = jsonObject.get("time-place").getAsString();
             String exam_time = jsonObject.get("exam_time").getAsString();
             Course course = new Course(course_id, course_name, credit, hours, dep_id);
+            List<Map<String, String>> sec_time = StringUtil.parse_time_and_place(arrangement);
+            List<Map<String,String>> teach_courses = teachesDAO.infoList(teacher_id);
+            //检测是否存在冲突
+            //检测时间地点是否冲突 检测任课人是否冲突
+            for (Map<String, String> res : sec_time) {
+                if ("".equals(res.get("time_start_id"))) {
+                    assert (false);
+//                    Timeslot timeslot = new Timeslot(res.get("start"), res.get("end"), res.get("day"));
+//                    timeslotDAO.append(timeslot);
+                } else {
+                    String time_end_id = "";
+                    if ("".equals(res.get("time_end_id"))) {
+                        time_end_id = res.get("time_start_id");
+                    } else {
+                        time_end_id = res.get("time_end_id");
+                    }
+                    int start = Integer.parseInt(res.get("time_start_id"));
+                    int end = Integer.parseInt(time_end_id);
+                    String place = res.get("place");
+                    for (int i = start; i <= end; i++) {
+                        if(sec_arrangementDAO.infoList(i+"",place).size()>0) {
+                            return -2;
+                        }
+                        for (Map<String,String> tt:teach_courses) {
+                            if(sec_arrangementDAO.infoList(i+"",tt.get("course_id"),tt.get("section_id"),tt.get("semester"),tt.get("year")).size()>0) {
+                                return -2;
+                            }
+                        }
+                    }
+                }
+            }
             if (courseDAO.infoList(course.getCourse_id()).size() == 0) {
                 courseDAO.append(course);
             }
@@ -256,7 +293,6 @@ public class ImportServiceImpl implements ImportService {
             if (teachesDAO.infoList(teacher_id, course_id, section_id, semester, year).size() == 0) {
                 teachesDAO.append(teaches);
             }
-            List<Map<String, String>> sec_time = StringUtil.parse_time_and_place(arrangement);
             //sec_arrangement
             for (Map<String, String> res : sec_time) {
                 if ("".equals(res.get("time_start_id"))) {
@@ -298,7 +334,36 @@ public class ImportServiceImpl implements ImportService {
 
     }
     private int importGrade(String path) throws IOException {
-        return -1;
+        int result = 0;
+        try {
+            List<JsonObject> grades=ExcelUtil.parseJson(path);
+            for (JsonObject json:grades) {
+                int tmp = add_grade(json);
+                if (tmp < result)
+                    result = tmp;
+            }
+            deleteExcel(path);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+        return result;
+    }
+    public int add_grade(JsonObject json) {
+        String teacher_id = this.jsonObject.get("teacher_id").getAsString();
+        String course_code = this.jsonObject.get("course_code").getAsString();
+        TimeControlService timeControlService = TimeControlService.getInstance();
+        String semester = ""+timeControlService.getSemester();
+        String year = ""+timeControlService.getYear();
+        Map<String,String> map=StringUtil.parse_course_code(course_code);
+        if(!("".equals(teacher_id))&&(teachesDAO.infoList(teacher_id,map.get("course_id"),map.get("section_id"),semester,year).size()==0))
+            return -2;
+        if(takesDAO.infoList(json.get("student_id").getAsString(),map.get("course_id"),map.get("section_id"),semester,year).size() == 1) {
+            Takes takes = new Takes(json.get("student_id").getAsString(),map.get("course_id"),map.get("section_id"),semester,year,json.get("grade").getAsString());
+            return takesDAO.modify(takes);
+        } else {
+            return -1;
+        }
     }
     private int deleteExcel(String path) throws IOException{
 
