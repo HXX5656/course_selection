@@ -32,7 +32,7 @@ private AccountDAO accountDAO= DAOFactory.getAccountDAOInstance();
 */ 
 @Test
 public void testAppend() throws Exception {
-    Account account=new Account("root", EncryptUtil.md5("root","123"));
+    Account account=new Account("T000002", EncryptUtil.md5("T000002","12345678"));
     assert (1 == accountDAO.append(account));
 
 } 
@@ -45,7 +45,7 @@ public void testAppend() throws Exception {
 @Test
 public void testDelete() throws Exception { 
 
-    String account = "root";
+    String account = "T000002";
     assert (1==accountDAO.delete(account));
 } 
 

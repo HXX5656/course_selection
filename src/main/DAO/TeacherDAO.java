@@ -11,4 +11,5 @@ public interface TeacherDAO {
     int delete(String teacher_id);
     int modify(Teacher teacher);
     List<Map<String,String>> infoList(String teacher_id);
+    List<Map<String, String>> allList();
 }

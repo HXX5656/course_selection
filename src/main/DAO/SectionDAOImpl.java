@@ -108,7 +108,52 @@ public class SectionDAOImpl implements SectionDAO {
             return null;
         }
     }
+    @Override
+    public List<Map<String, String>> allList() {
+        Connection connection = SqlUtil.createCon();
+        try {
+            String sql = "select * from data.section";
+            PreparedStatement ppst = connection.prepareStatement(sql);
+            ResultSet res = ppst.executeQuery();
+            SqlUtil.closeCon();
+            return setReturn(res);
+        } catch (Exception e) {
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return null;
+        }
+    }
 
+    @Override
+    public List<Map<String, String>> courseList(String semester, String year) {
+        Connection connection = SqlUtil.createCon();
+        try {
+            String sql = "select * from data.section where semester ='" +semester+"' and year='"+year+"'";
+            PreparedStatement ppst = connection.prepareStatement(sql);
+            ResultSet res = ppst.executeQuery();
+            SqlUtil.closeCon();
+            return setReturn(res);
+        } catch (Exception e) {
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return null;
+        }
+    }
+    public List<Map<String,String>> teach_courses(String teacher_id) {
+        Connection connection = SqlUtil.createCon();
+        try {
+            String sql = "select * from data.section as s,data.teaches as t where t.teacher_id ='"+teacher_id
+                    +"' and s.course_id = t.course_id and s.section_id = t.section_id and s.semester = t.semester and s.year = t.year ";
+            PreparedStatement ppst = connection.prepareStatement(sql);
+            ResultSet res = ppst.executeQuery();
+            SqlUtil.closeCon();
+            return setReturn(res);
+        } catch (Exception e) {
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return null;
+        }
+    }
     private List<Map<String, String>> setReturn(ResultSet res) {
         try {
             List<Map<String, String>> result = new ArrayList<>();

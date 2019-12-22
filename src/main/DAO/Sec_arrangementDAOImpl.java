@@ -125,6 +125,22 @@ public class Sec_arrangementDAOImpl implements Sec_arrangementDAO {
         }
 
     }
+    public List<Map<String,String>> getArrangements(String course_id, String section_id, String semester, String year) {
+        Connection connection = SqlUtil.createCon();
+        List<String> stringList = new ArrayList<>();
+        try {
+            String sql = "select * from data.sec_arrangement where course_id='" + course_id + "' AND section_id='" + section_id + "' AND semester='" + semester + "' AND year='" + year+"'";
+            PreparedStatement ppst = connection.prepareStatement(sql);
+            ResultSet res = ppst.executeQuery();
+            List<Map<String, String>> result = setReturn(res);
+            SqlUtil.closeCon();
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return null;
+        }
+    }
 
     private List<Map<String, String>> setReturn(ResultSet res) {
         try {

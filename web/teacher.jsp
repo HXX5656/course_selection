@@ -37,29 +37,205 @@
 <br>
 
 <div class="col-2" style="float: left">
-    <div class="text-left" style=background-color:lavender>教师姓名：</div>
-    <div clas="text-left" style=background-color:lavender>工号：</div>
-    <div clas="text-left" style=background-color:lavender>院系：</div>
-    <div clas="text-left" style=background-color:lavender>入职时间：</div>
+    <div class="text-left" id="name" style=background-color:lavender>教师姓名：</div>
+    <div class="text-left" id="id"  style=background-color:lavender>工号：</div>
+    <div class="text-left" id="dep" style=background-color:lavender>院系：</div>
+    <div class="text-left" id="time"  style=background-color:lavender>入职时间：</div>
 </div>
 
 
-<div class="col-2" style="float: right">
+<div class="col-8">
     <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#demo">负责课程</button>
     <div id="demo" class="collapse">
-        课程1<br>
-        课程2
     </div>
     <br>
     <br>
     <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#chosen">申请列表</button>
     <div  id="chosen"  class="collapse">
-        课程1<br>
-        课程2
     </div>
+    <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#look">查看课程花名册</button>
+    <div  id="look"  class="collapse">
+        <div class="container" id="radio_box">
+        </div>
+        <div class="container" id="stu_table">
+        </div>
+    </div>
+
 
 </div>
 
 </div>
 </body>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="http://malsup.github.io/jquery.form.js"></script>
+<script type="text/javascript">
+    var cr_list ={"type":"applications"};
+    if(sessionStorage.getItem("role") !== "teacher.jsp") {
+        $(location).attr("href",sessionStorage.getItem("role"));
+    } else {
+        var id = sessionStorage.getItem("userID");
+        $.ajax({
+            url:"/Servlet",
+            type:"post",
+            async:false,
+            data:{"type":"teacher_info","teacher_id":id},
+            dataType:"json",
+            success:function(data) {
+                getTeacherInfo(data);
+            }
+        });
+        $.ajax({
+            url:"/Servlet",
+            type:"post",
+            async:false,
+            data:{"type":"teacher_courses","teacher_id":id},
+            dataType:"json",
+            success:function(data) {
+                getCourseLists(data);
+                $.ajax({
+                    url:"/Servlet",
+                    type:"post",
+                    async:false,
+                    data:cr_list,
+                    dataType:"json",
+                    success:function(data) {
+                        getApplicationLists(data);
+                    }
+                });
+            }
+        });
+        $(".access").click(function () {
+            var app_id = $(this).val();
+            $.ajax({
+                url:"/Servlet",
+                type:"post",
+                async:false,
+                data:{"type":"confirm_app","app_id":app_id},
+                dataType:"text",
+                success:function(data) {
+                    if(data === "1") {
+                        alert("您的操作已成功");
+                    } else if(data === "-2"){
+                        alert("您的操作失败了,当前不在选课时间段内");
+                    } else {
+                        alert("您的操作失败");
+                    }
+                    $(location).attr("href",sessionStorage.getItem("role"));
+            } }
+            );
+        });
+        $(".refuse").click(function () {
+            var app_id = $(this).val();
+            $.ajax({
+                url:"/Servlet",
+                type:"post",
+                async:false,
+                data:{"type":"refuse_app","app_id":app_id},
+                dataType:"text",
+                success:function(data) {
+                    if(data === "1") {
+                        alert("您的操作已成功");
+                    } else if(data === "-2"){
+                        alert("您的操作失败了,当前不在选课时间段内");
+                    } else {
+                        alert("您的操作失败");
+                    }
+                    $(location).attr("href",sessionStorage.getItem("role"));
+                } }
+            );
+        });
+    }
+    function getApplicationLists(data) {
+        var html = "<tr><th>申请码</th><th>学生学号</th><th>申请课程</th><th>上课学期</th><th>申请理由</th><th>申请状态</th><th>同意</th><th>驳回</th></tr>";
+        for (var key in data) {
+            var tmp = "";
+            var canBeDone = false;
+            tmp+="<td>"+key+"</td><td>"+data[key]["student_id"]+"</td><td>"+data[key]["course_code"]
+                +"</td><td>"+data[key]["year"]+"/"+data[key]["semester"]+"</td><td>"+data[key]["reason"]+"</td>";
+            if(data[key]["status"] === "0") {
+                canBeDone = true;
+                tmp+="<td>未处理</td>";
+            } else if(data[key]["status"] === "1") {
+                tmp+="<td>申请已通过</td>";
+            } else {
+                tmp+="<td>申请已被驳回</td>";
+            }
+            tmp+="<td><button type='button' class='access' value='"+key+"' "+(canBeDone?"":"disabled")+">同意</button></td>";
+            tmp+="<td><button type='button' class='refuse' value='"+key+"' "+(canBeDone?"":"disabled")+">驳回</button></td>";
+            tmp = "<tr>"+tmp+"</tr>";
+            html+=tmp;
+        }
+        html="<table border=\"1px\" cellspacing=\"0px\" style=\"border-collapse:collapse\">"+html+"</table>";
+        $("#chosen").append(html);
+    }
+    function getTeacherInfo(data) {
+        var teacher_id = data["teacher_id"];
+        var teacher_name = data["teacher_name"];
+        var enter_time = data["enter_time"];
+        var dep = data["department"];
+        $("#id").html($("#id").html()+teacher_id);
+        $("#name").html($("#name").html()+teacher_name);
+        $("#time").html($("#time").html()+enter_time);
+        $("#dep").html($("#dep").html()+dep);
+    }
+    function getCourseLists(data) {
+        alert(JSON.stringify(data));
+        var json = data;
+        var len = Object.keys(json).length;
+        var radios = "";
+        var html = "<tr><th>课程代码</th><th>课程名称</th><th>课程学分</th><th>课时安排</th><th>上课学期</th><th>选课人数</th></tr>";
+        for (var i = 0;i<len;i++) {
+            var item = json[i+""];
+            var tmp = "";
+            cr_list[""+i]=item["semester"]+"/"+item["year"]+" "+item["course_code"];
+            radios += "<label class='radio-inline'><input type='radio' name='optradio' value='"+item["semester"]+"/"+item["year"]+" "+item["course_code"]+"' "
+                + (i === 0?"checked":"")+">"+item["semester"]+"/"+item["year"]+" "+item["course_code"]+"</label>";
+            tmp += "<td>"+item["course_code"]+"</td><td>"+item["course_name"]+"</td><td>"+item["course_credit"]+"</td><td>";
+            var arr = item["time_place"];
+            var arr_len = Object.keys(arr).length;
+            for(var j = 0;j<arr_len;j++) {
+                var jtem = arr[j+""];
+                tmp += "周"+jtem["day"]+"第"+jtem["step"]+"节 H"+jtem["room"]+";<br>";
+            }
+            tmp+="</td><td>"+item["year"]+"/"+item["semester"]+"</td><td>"+item["selected_persons"]+"/"+item["max_members"]+"</td>";
+            tmp = "<tr>"+tmp+"</tr>";
+            html+=tmp;
+        }
+        html="<table border=\"1px\" cellspacing=\"0px\" style=\"border-collapse:collapse\">"+html+"</table>";
+        // alert("son/mother:"+total_grade_son+"/"+total_grades_mother);
+        alert(html);
+        $("#demo").append(html);
+        $("#radio_box").append(radios);
+        show_student_list();
+    }
+    $("input[type=radio][name=optradio]").change(show_student_list());
+    function show_student_list() {
+        var value_course = $("input:radio:checked").val();
+        var semester = value_course.substr(0,1);
+        var year = value_course.substr(2,4);
+        var course_code = value_course.substr(7);
+        alert("展示的时候："+course_code);
+        $.ajax({
+            url:"/Servlet",
+            type:"post",
+            async:false,
+            data:{"type":"student_list","course_code":course_code,"semester":semester,"year":year},
+            dataType:"json",
+            success:function(data) {
+                getStudentLists(data);
+            }
+        });
+    }
+    function getStudentLists(data) {
+        $("#stu_table").html("");
+        var len = Object.keys(data).length;
+        var html = "<tr><th>学号</th><th>学生姓名</th></tr>";
+        for (var i = 0;i<len;i++) {
+            var item = data[i+""];
+            html+="<tr><td>"+item["student_id"]+"</td><td>"+item["student_name"]+"</td></tr>"
+        }
+        html="<table border=\"1px\" cellspacing=\"0px\" style=\"border-collapse:collapse\">"+html+"</table>";
+        $("#stu_table").append(html);
+    }
+</script>
 </html>

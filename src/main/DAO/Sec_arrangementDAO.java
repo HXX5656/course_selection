@@ -11,5 +11,5 @@ public interface Sec_arrangementDAO {
     List<Map<String, String>> infoList(String time_slot_id, String room_id);
     int delete(String time_slot_id, String room_id);
     List<String> findRoom(String course_id, String section_id, String semester, String year);
-
+    List<Map<String,String>> getArrangements(String course_id, String section_id, String semester, String year);
 }

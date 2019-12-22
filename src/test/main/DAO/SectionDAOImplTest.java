@@ -68,6 +68,10 @@ public class SectionDAOImplTest {
         String year = "2019";
         assert (1 == sectionDAO.delete(course_id, section_id, semester, year));
     }
-
+    @Test
+    public void testTeaches() throws Exception {
+        String teacher_id = "1";
+        assert (null != sectionDAO.teach_courses(teacher_id));
+    }
 
 } 

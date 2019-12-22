@@ -13,6 +13,7 @@ public class StringUtil {
     public static boolean isNotEmpty(String str) {
         return !isEmpty(str);
     }
+    //封装了setstring解决setnull问题
     public static void set_string(PreparedStatement ppst,int index,String arg,int types) {
         try {
             if(isEmpty(arg)) {
@@ -30,6 +31,12 @@ public class StringUtil {
         result.put("section_id",code.substring(9,11));
         return result;
     }
+    public static String create_course_code(String course_id,String department,String section_id) {
+        if (section_id.length() == 1) {
+            return department+course_id+".0"+section_id;
+        }
+        return department+course_id+"."+section_id;
+    }
     public static String parse_idNumber(String id,boolean isTeacher) {
         String number=id;
         if(number.length()<6) {
@@ -44,6 +51,17 @@ public class StringUtil {
         return number;
     }
 
+    public static Map<String,String> parse_code(String code){
+        String semester=code.substring(0,1);
+        String year = code.substring(2,6);
+        Map<String,String> tmp = parse_course_code(code.substring(7));
+        Map<String,String> result = new HashMap<>();
+        result.put("course_id",tmp.get("course_id"));
+        result.put("section_id",tmp.get("section_id"));
+        result.put("semester",semester);
+        result.put("year",year);
+        return result;
+    }
     /*课程设置
     * 参照复旦大学 本科生 上课表
     * */
@@ -53,6 +71,15 @@ public class StringUtil {
         for (int i = 0; i < strs.length; i++) {
             result.add(parse_sentence(strs[i].trim()));
         }
+        return result;
+    }
+    public static Map<String,Integer> getStep(String time_id) {
+        int id = Integer.parseInt(time_id);
+        int day = (id - 5)/13 +1;
+        int step = id - (day-1)*13 - 4;
+        Map<String,Integer> result =  new HashMap<>();
+        result.put("step",step);
+        result.put("day",day);
         return result;
     }
     private static Map<String,String> parse_sentence(String arg) {

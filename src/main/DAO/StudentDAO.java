@@ -7,4 +7,5 @@ public interface StudentDAO {
     int delete(String student_id);
     int modify(Student student);
     List<Map<String,String>> infoList(String student_id);
+    List<Map<String, String>> allList();
 }

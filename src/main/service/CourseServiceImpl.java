@@ -3,6 +3,7 @@ package main.service;
 import com.google.gson.JsonObject;
 import main.DAO.*;
 import main.entity.*;
+import main.util.StringUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,10 @@ public class CourseServiceImpl implements CourseService {
     private TakesDAO takesDAO;
     private CancelDAO cancelDAO;
     private ApplicationDAO applicationDAO;
+    private SectionDAO sectionDAO;
+    private CourseDAO courseDAO;
+    private DepartmentDAO departmentDAO;
+    private Sec_arrangementDAO sec_arrangementDAO;
 
 
     public CourseServiceImpl(JsonObject jsonObject) {
@@ -19,6 +24,23 @@ public class CourseServiceImpl implements CourseService {
         this.takesDAO = DAOFactory.getTakesDAOInstance();
         this.cancelDAO = DAOFactory.getCancelDAOINstance();
         this.applicationDAO = DAOFactory.getApplicationDAOInstance();
+        this.sectionDAO = DAOFactory.getSectionDAOInstance();
+        this.courseDAO = DAOFactory.getCourseDAOInstance();
+        this.departmentDAO=DAOFactory.getDepartmentDAOInstance();
+        this.sec_arrangementDAO=DAOFactory.getSecArrangementDAOInstance();
+        if(this.jsonObject.get("app_id")!=null){
+//            Map<String,String> tmp = StringUtil.parse_course_code(this.jsonObject.get("course_code").getAsString());
+            List<Map<String,String>> tt = this.applicationDAO.infoList(this.jsonObject.get("app_id").getAsString());
+            if(tt.size() == 1) {
+                this.jsonObject.addProperty("course_id",tt.get(0).get("course_id"));
+                this.jsonObject.addProperty("section_id",tt.get(0).get("section_id"));
+                this.jsonObject.addProperty("semester",tt.get(0).get("semester"));
+                this.jsonObject.addProperty("year",tt.get(0).get("year"));
+                this.jsonObject.addProperty("student_id",tt.get(0).get("student_id"));
+            } else {
+                assert (false);
+            }
+        }
     }
 
     /*
@@ -31,6 +53,8 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public int select_or_cancel() {
 
+        if(!TimeControlService.getInstance().isCanSelect())
+            return -2;
         String student_id = jsonObject.get("student_id").getAsString();
         String course_id = jsonObject.get("course_id").getAsString();
         String section_id = jsonObject.get("section_id").getAsString();
@@ -125,6 +149,162 @@ public class CourseServiceImpl implements CourseService {
 
 
     }
+    @Override
+    public JsonObject courseList() {
+        String semester_i=jsonObject.get("semester").getAsString();
+        String year_i=jsonObject.get("year").getAsString();
+        String student_id=jsonObject.get("student_id")==null?"":jsonObject.get("student_id").getAsString();
+        String semester = semester_i;
+        String year = year_i;
+        if(StringUtil.isEmpty(semester_i))
+            semester = TimeControlService.getInstance().getSemester()+"";
+        if(StringUtil.isEmpty(year_i))
+            year = TimeControlService.getInstance().getYear()+"";
+        boolean out = false;
+        if(Integer.parseInt(year_i)<Integer.parseInt(year))
+            out = true;
+        if(Integer.parseInt(year_i)==Integer.parseInt(year)&&Integer.parseInt(semester_i)<Integer.parseInt(semester))
+            out = true;
+        if(TimeControlService.getInstance().isCanSelect())
+            out = true;
+        List<Map<String,String>> courses = sectionDAO.courseList(semester,year);
+        List<Map<String,String>> tmp;
+        JsonObject jsons = new JsonObject();
+        int index = 0;
+        for (Map<String,String> map:courses) {
+//            Gson gson=new Gson();
+//            JsonObject jj =gson.toJson(map);
+            JsonObject j = new JsonObject();
+            j.addProperty("student_id",student_id);
+            String course_id = map.get("course_id");
+            String section_id = map.get("section_id");
+            j.addProperty("course_id",course_id);
+            j.addProperty("section_id",section_id);
+            tmp = courseDAO.infoList(course_id);
+            if (tmp.size() == 1) {
+                Map<String,String> course_info = tmp.get(0);
+                j.addProperty("course_name",course_info.get("course_name"));
+                j.addProperty("course_credit", course_info.get("credit"));
+                j.addProperty("course_period",course_info.get("period"));
+                String course_dep = course_info.get("department");
+                tmp = departmentDAO.infoList(course_dep);
+                if(tmp.size() == 1) {
+                    j.addProperty("course_code", StringUtil.create_course_code(course_id,
+                            tmp.get(0).get("dep_name"),section_id));
+                    //选课人数，上课时间和地点等等
+                    tmp = takesDAO.studentInfoList(course_id,section_id,semester,year);
+                    j.addProperty("selected_persons",tmp.size()+"");
+                    tmp = sectionDAO.infoList(course_id,section_id,semester,year);
+                    if(tmp.size() == 1) {
+                        j.addProperty("max_members",tmp.get(0).get("max")+"");
+                        if(student_id.length()==0) {
+                            j.addProperty("status","");
+                        }
+                        else if(!out)
+                        {
+                            j.addProperty("status",relationship(student_id,course_id,section_id,semester,year,j.get("selected_persons").getAsString(),j.get("max_members").getAsString()));
+                        } else {
+                            j.addProperty("status","已过选课时间");
+                        }
+                        tmp = sec_arrangementDAO.getArrangements(course_id,section_id,semester,year);
+                        JsonObject jj = new JsonObject();
+                        int count = 0;
+                        for (Map<String,String> entry:tmp) {
+                            JsonObject arran = new JsonObject();
+                            String id = entry.get("time_slot_id");
+                            Map<String,Integer> time = StringUtil.getStep(id);
+                            arran.addProperty("day",time.get("day")+"");
+                            arran.addProperty("step",time.get("step")+"");
+                            arran.addProperty("room",entry.get("room_id"));
+                            jj.add(count+"",arran);
+                            count+=1;
+                        }
+                        j.add("time_place",jj);
+                        jsons.add(index+"",j);
+                        index+=1;
+                        continue;
+
+                    }
+
+                }
+            }
+            assert (false);
+        }
+        return jsons;
+    }
+    @Override
+    public JsonObject teach_courses() {
+        String teacher_id=jsonObject.get("teacher_id").getAsString();
+        List<Map<String,String>> courses = sectionDAO.teach_courses(teacher_id);
+        List<Map<String,String>> tmp;
+        JsonObject jsons = new JsonObject();
+        int index = 0;
+        for (Map<String,String> map:courses) {
+//            Gson gson=new Gson();
+//            JsonObject jj =gson.toJson(map);
+            JsonObject j = new JsonObject();
+            j.addProperty("teacher_id",teacher_id);
+            String course_id = map.get("course_id");
+            String section_id = map.get("section_id");
+            String semester = map.get("semester");
+            String year = map.get("year");
+            j.addProperty("course_id",course_id);
+            j.addProperty("section_id",section_id);
+            j.addProperty("year",year);
+            j.addProperty("semester",semester);
+            tmp = courseDAO.infoList(course_id);
+            if (tmp.size() == 1) {
+                Map<String,String> course_info = tmp.get(0);
+                j.addProperty("course_name",course_info.get("course_name"));
+                j.addProperty("course_credit", course_info.get("credit"));
+                j.addProperty("course_period",course_info.get("period"));
+                String course_dep = course_info.get("department");
+                tmp = departmentDAO.infoList(course_dep);
+                if(tmp.size() == 1) {
+                    j.addProperty("course_code", StringUtil.create_course_code(course_id,
+                            tmp.get(0).get("dep_name"),section_id));
+                    //选课人数，上课时间和地点等等
+                    tmp = takesDAO.studentInfoList(course_id,section_id,semester,year);
+                    j.addProperty("selected_persons",tmp.size()+"");
+                    tmp = sectionDAO.infoList(course_id,section_id,semester,year);
+                    if(tmp.size() == 1) {
+                        j.addProperty("max_members",tmp.get(0).get("max")+"");
+                        tmp = sec_arrangementDAO.getArrangements(course_id,section_id,semester,year);
+                        JsonObject jj = new JsonObject();
+                        int count = 0;
+                        for (Map<String,String> entry:tmp) {
+                            JsonObject arran = new JsonObject();
+                            String id = entry.get("time_slot_id");
+                            Map<String,Integer> time = StringUtil.getStep(id);
+                            arran.addProperty("day",time.get("day")+"");
+                            arran.addProperty("room",entry.get("room_id"));
+                            arran.addProperty("step",time.get("step")+"");
+                            jj.add(count+"",arran);
+                            count+=1;
+                        }
+                        j.add("time_place",jj);
+                        jsons.add(index+"",j);
+                        index+=1;
+                        continue;
+
+                    }
+
+                }
+            }
+            assert (false);
+        }
+        return jsons;
+    }
+    private String relationship(String student_id,String course_id,String section_id,String semester,String year,String selected,String max) {
+        if(takesDAO.infoList(student_id, course_id, section_id, semester, year).size() == 0) {
+            if(Integer.parseInt(selected)>=Integer.parseInt(max)) {
+                return "提交选课申请";
+            }
+            return "选课";
+        } else {
+            return "退课";
+        }
+    }
 
     @Override
     public int refuse_apply() {//手动
@@ -135,13 +315,14 @@ public class CourseServiceImpl implements CourseService {
     }
 
     private String getApp_id() {
-        String student_id = jsonObject.get("student_id").getAsString();
-        String course_id = jsonObject.get("course_id").getAsString();
-        String section_id = jsonObject.get("section_id").getAsString();
-        String semester = jsonObject.get("semester").getAsString();
-        String year = jsonObject.get("year").getAsString();
-        int app_id = applicationDAO.info_id(student_id, course_id, section_id, semester, year);
-        return app_id >= 1 ? app_id + "" : "0";
+//        String student_id = jsonObject.get("student_id").getAsString();
+//        String course_id = jsonObject.get("course_id").getAsString();
+//        String section_id = jsonObject.get("section_id").getAsString();
+//        String semester = jsonObject.get("semester").getAsString();
+//        String year = jsonObject.get("year").getAsString();
+//        int app_id = applicationDAO.info_id(student_id, course_id, section_id, semester, year);
+//        return app_id >= 1 ? app_id + "" : "0";
+        return jsonObject.get("app_id").getAsString();
     }
 
     private boolean isTaken() {

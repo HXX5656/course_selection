@@ -92,7 +92,22 @@ public class StudentDAOImpl implements StudentDAO {
     public List<Map<String, String>> infoList(String student_id) {
         Connection connection= SqlUtil.createCon();
         try {
-            String sql="select * from data.student where student_id ="+student_id;
+            String sql="select * from data.student where student_id ='"+student_id+"'";
+            PreparedStatement ppst=connection.prepareStatement(sql);
+            ResultSet res=ppst.executeQuery();
+            SqlUtil.closeCon();
+            return setReturn(res);
+        } catch (Exception e) {
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return null;
+        }
+    }
+    @Override
+    public List<Map<String, String>> allList() {
+        Connection connection= SqlUtil.createCon();
+        try {
+            String sql="select * from data.student";
             PreparedStatement ppst=connection.prepareStatement(sql);
             ResultSet res=ppst.executeQuery();
             SqlUtil.closeCon();

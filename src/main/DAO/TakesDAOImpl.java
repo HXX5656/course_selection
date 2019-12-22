@@ -130,6 +130,21 @@ public class TakesDAOImpl implements TakesDAO {
         }
     }
 
+    @Override
+    public List<Map<String,String>> get_taken_course(String student_id) {
+        Connection connection= SqlUtil.createCon();
+        try {
+            String sql="select * from data.takes where student_id ='"+student_id+"'";
+            PreparedStatement ppst=connection.prepareStatement(sql);
+            ResultSet res=ppst.executeQuery();
+            SqlUtil.closeCon();
+            return setReturn(res);
+        } catch (Exception e) {
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return null;
+        }
+    }
 
     private List<Map<String, String>> setReturn(ResultSet res) {
         try {

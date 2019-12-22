@@ -31,6 +31,23 @@ public class TeacherDAOImpl implements TeacherDAO {
         }
 
     }
+    @Override
+    public List<Map<String, String>> allList() {
+
+        Connection connection=SqlUtil.createCon();
+        try {
+            String sql="select * from data.teacher";
+            PreparedStatement ppst=connection.prepareStatement(sql);
+            ResultSet res=ppst.executeQuery();
+            SqlUtil.closeCon();
+            return setReturn(res);
+        } catch (Exception e) {
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return null;
+        }
+
+    }
 
     @Override
     public int append(Teacher teacher) {

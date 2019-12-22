@@ -38,6 +38,60 @@ public class Servlet extends HttpServlet {
             case "login":
                 pw.print(ServiceFactory.getLoginServiceInstance(param).login());
                 break;
+            case "student_info":
+                pw.print(ServiceFactory.getUserServiceInstance(param).get_student_courseInfo());
+                break;
+            case "courseList":
+                pw.print(ServiceFactory.getCourseServiceInstance(param).courseList());
+                break;
+            case "apply":
+                pw.print(ServiceFactory.getCourseServiceInstance(param).apply());
+                break;
+            case "select_drop":
+                pw.print(ServiceFactory.getCourseServiceInstance(param).select_or_cancel());
+                break;
+            case "teacher_info":
+                pw.print(ServiceFactory.getUserServiceInstance(param).get_teacher_info());
+                break;
+            case "teacher_courses":
+                pw.print(ServiceFactory.getCourseServiceInstance(param).teach_courses());
+                break;
+            case "student_list":
+                pw.print(ServiceFactory.getUserServiceInstance(param).showStudents());
+                break;
+            case "applications":
+                pw.print(ServiceFactory.getUserServiceInstance(param).showApplications());
+                break;
+            case "confirm_app":
+                pw.print(ServiceFactory.getCourseServiceInstance(param).confirm_apply());
+                break;
+            case "refuse_app":
+                pw.print(ServiceFactory.getCourseServiceInstance(param).refuse_apply());
+                break;
+            case "student_applications":
+                pw.print(ServiceFactory.getUserServiceInstance(param).student_applications());
+                break;
+            case "a_students":
+                pw.print(ServiceFactory.getUserServiceInstance(param).generate_students());
+                break;
+            case "a_teachers":
+                pw.print(ServiceFactory.getUserServiceInstance(param).generate_teachers());
+                break;
+            case "a_courses":
+                pw.print(ServiceFactory.getUserServiceInstance(param).generate_courses());
+                break;
+            case "add_student":
+                pw.print(ServiceFactory.getImportServiceInstance(param).add_student());
+                break;
+            case "add_teacher":
+                pw.print(ServiceFactory.getImportServiceInstance(param).add_teacher());
+                break;
+            case "add_course":
+                pw.print(ServiceFactory.getImportServiceInstance(param).addCourse(param));
+                break;
+            case "status":
+                pw.print(ServiceFactory.getImportServiceInstance(param).change_status());
+                break;
         }
         pw.flush();
         pw.close();
