@@ -130,6 +130,38 @@ public class TakesDAOImpl implements TakesDAO {
         }
     }
 
+    @Override
+    public List<Map<String,String>> findByStudent(String student_id){
+        Connection connection = SqlUtil.createCon();
+        try{
+            String sql="SELECT * FROM data.takes WHERE student_id=" + student_id;
+            PreparedStatement ppst = connection.prepareStatement(sql);
+            ResultSet res = ppst.executeQuery();
+            SqlUtil.closeCon();
+            return setReturn(res);
+        }catch (Exception e){
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return null;
+        }
+    }
+
+    @Override
+    public int delete_by_section(String course_id,String section_id,String semster,String year){
+        Connection connection = SqlUtil.createCon();
+        try{
+            String sql="DELETE FROM data.takes WHERE course_id='"+course_id+"' AND section_id='"+section_id+"' AND semester='"+semster+"' AND year='"+year+"'";
+            PreparedStatement ppst = connection.prepareStatement(sql);
+            int ret=ppst.executeUpdate();
+            SqlUtil.closeCon();
+            return ret;
+        }catch (Exception e){
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return -1;
+        }
+    }
+
 
     private List<Map<String, String>> setReturn(ResultSet res) {
         try {

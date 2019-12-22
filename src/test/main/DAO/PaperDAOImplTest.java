@@ -64,4 +64,8 @@ public class PaperDAOImplTest {
         assert (1 == paperDAO.delete(paper));
     }
 
-} 
+    @Test
+    public void testDeleteById() throws Exception {
+        assert (1 == paperDAO.delete_by_examID("9"));
+    }
+}

@@ -10,4 +10,5 @@ public interface PaperDAO {
     int delete(Paper paper);
     int modify(Paper paper);
     List<Map<String,String>> infoList(String exam_id);
+    int delete_by_examID(String id);
 }

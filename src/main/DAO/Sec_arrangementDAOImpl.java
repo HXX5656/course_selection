@@ -99,6 +99,48 @@ public class Sec_arrangementDAOImpl implements Sec_arrangementDAO {
     }
 
     @Override
+    public int delete_by_section(String course_id,String section_id,String semester,String year){
+        Connection connection = SqlUtil.createCon();
+        try{
+            String sql="DELETE FROM data.sec_arrangement WHERE course_id='"+course_id+"' AND section_id='"+section_id+"' AND semester='"+semester+"' AND year='"+year+"'";
+            PreparedStatement ppst = connection.prepareStatement(sql);
+            int ret=ppst.executeUpdate();
+            SqlUtil.closeCon();
+            return ret;
+        }catch (Exception e){
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return -1;
+        }
+    }
+
+    @Override
+    public int find_time(String course_id, String section_id, String semester, String year){
+        Connection connection = SqlUtil.createCon();
+        int time = 0;
+        try {
+            String sql = "select * from data.sec_arrangement where course_id=" + course_id + " AND section_id=" + section_id + " AND semester=" + semester + " AND year=" + year;
+            PreparedStatement ppst = connection.prepareStatement(sql);
+            ResultSet res = ppst.executeQuery();
+            List<Map<String, String>> result = setReturn(res);
+            SqlUtil.closeCon();
+            if (result == null || result.size() == 0) {
+                return time;
+            } else {
+                for (int i = 0; i < result.size(); i++) {
+                    time = Integer.parseInt(result.get(0).get("time_slot_id"));
+                }
+                return time;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return 0;
+        }
+    }
+
+    @Override
     public List<String> findRoom(String course_id, String section_id, String semester, String year) {
         Connection connection = SqlUtil.createCon();
         List<String> stringList = new ArrayList<>();

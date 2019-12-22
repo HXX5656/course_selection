@@ -51,6 +51,22 @@ public class TeachesDAOImpl implements TeachesDAO {
     }
 
     @Override
+    public int delete_by_section(String course_id,String section_id,String semster,String year){
+        Connection connection = SqlUtil.createCon();
+        try{
+            String sql="DELETE FROM data.teaches WHERE course_id='"+course_id+"' AND section_id='"+section_id+"' AND semester='"+semster+"' AND year='"+year+"'";
+            PreparedStatement ppst = connection.prepareStatement(sql);
+            int ret=ppst.executeUpdate();
+            SqlUtil.closeCon();
+            return ret;
+        }catch (Exception e){
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return -1;
+        }
+    }
+
+    @Override
     public int modify(Teaches teaches) {
         return 0;
     }

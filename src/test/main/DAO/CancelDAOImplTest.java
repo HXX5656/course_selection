@@ -33,7 +33,7 @@ public class CancelDAOImplTest {
     @Test
     public void testAppend() throws Exception {
 
-        Cancel cancel=new Cancel("2","1","1","2","2019");
+        Cancel cancel=new Cancel("7","9","9","1","2020");
         assert (1==cancelDAO.append(cancel));
     }
 
@@ -68,5 +68,8 @@ public class CancelDAOImplTest {
         assert (2==cancelDAO.delete(cancel));
     }
 
-
-} 
+    @Test
+    public void delete_by_section() throws Exception {
+        cancelDAO.delete_by_section("9","9","1","2020");
+    }
+}
