@@ -12,4 +12,5 @@ public interface TakesDAO {
     List<Map<String,String>> findByStudent(String student_id);
     int delete(Takes takes);
     int delete_by_section(String course_id,String section_id,String semster,String year);
+    List<Map<String,String>> get_taken_course(String student_id);
 }

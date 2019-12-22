@@ -56,7 +56,7 @@ public class CourseServiceImpl implements CourseService {
     public String select_or_cancel() {
 
         if(!TimeControlService.getInstance().isCanSelect())
-            return -2;
+            return "当前不在选课时段内";
         String student_id = jsonObject.get("student_id").getAsString();
         String course_id = jsonObject.get("course_id").getAsString();
         String section_id = jsonObject.get("section_id").getAsString();
