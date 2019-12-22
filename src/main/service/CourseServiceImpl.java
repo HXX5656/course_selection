@@ -5,6 +5,8 @@ import main.DAO.*;
 import main.entity.*;
 import main.util.StringUtil;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +53,7 @@ public class CourseServiceImpl implements CourseService {
     * 上面的课指的是开课实例而不是课程
     * 实现思路：根据逻辑调用选课和退课的dao*/
     @Override
-    public int select_or_cancel() {
+    public String select_or_cancel() {
 
         if(!TimeControlService.getInstance().isCanSelect())
             return -2;
@@ -61,11 +63,20 @@ public class CourseServiceImpl implements CourseService {
         String semester = jsonObject.get("semester").getAsString();
         String year = jsonObject.get("year").getAsString();
 
-        if (isRoomMax()) {
-            return 0;
+        if (!check_sec_time().equals("no")){
+            return check_sec_time();
         }
+
+        if (!chec_exam_time().equals("no")){
+            return chec_exam_time();
+        }
+
+        if (isRoomMax()) {
+            return "0";
+        }
+
         if (isSecMax()) {
-            return 0;
+            return "0";
         }
 
         if (takesDAO.infoList(student_id, course_id, section_id, semester, year).size() == 0) {
@@ -75,16 +86,16 @@ public class CourseServiceImpl implements CourseService {
             if (!getApp_id().equals("0")) {
                 applicationDAO.modify(new Application(getApp_id(), null, "-2", null, null, null, null, null, null));
             }
-            return i;
+            return ""+i;
         } else {
 
             if (!isCanceled()) {
                 int i = cancelDAO.append(new Cancel(student_id, course_id, section_id, semester, year));
                 takesDAO.delete(new Takes(student_id, course_id, section_id, semester, year, null));
                 auto();
-                return i;
+                return ""+i;
             }else {
-                return 0;
+                return "0";
             }
         }
     }
@@ -128,23 +139,41 @@ public class CourseServiceImpl implements CourseService {
     * 建议实现：教师驳回设置状态为-1，自动驳回设置状态为-2，使用不同函数实现
     * 这只是我的看法，你也可以简单实现驳回后就不能再申请，决定之后微信告知我一下就好*/
     @Override
-    public int confirm_apply() {
+    public String confirm_apply() {
+        //if(!TimeControlService.getInstance().isCanSelect())
+         //   return "-2";
         Application application = new Application(getApp_id(), "", "", "", "", "", "", "", "");
         if (isTaken()) {
-            return 0;
+            return "taken";
+        }
+
+        if(!check_sec_time().equals("no")){
+            return check_sec_time();
         }
 
         if (isCanceled()) {
-            return 0;
+            return "caneceled";
         }
+
+        if(isRoomMax()){
+            return "room max";
+        }
+
+        String student_id = jsonObject.get("student_id").getAsString();
+        String course_id = jsonObject.get("course_id").getAsString();
+        String section_id = jsonObject.get("section_id").getAsString();
+        String semester = jsonObject.get("semester").getAsString();
+        String year = jsonObject.get("year").getAsString();
 
         application.setStatus("1");
         int applied = applicationDAO.modify(application);
-        int taken = select_or_cancel();
+
+        int taken = takesDAO.append(new Takes(student_id,course_id,section_id,semester,year,null));
+
         if (applied == 1 && taken == 1) {
-            return 1;
+            return "1";
         } else {
-            return 0;
+            return "0";
         }
 
 
@@ -308,11 +337,45 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public int refuse_apply() {//手动
+        if(!TimeControlService.getInstance().isCanSelect())
+            return -2;
         Application application = new Application(getApp_id(), "", "", "", "", "", "", "", "");
         application.setStatus("-1");
         return applicationDAO.modify(application);
 
     }
+
+    @Override
+    public int delete_section(){
+        String course_id = jsonObject.get("course_id").getAsString();
+        String section_id = jsonObject.get("section_id").getAsString();
+        String semester = jsonObject.get("semester").getAsString();
+        String year = jsonObject.get("year").getAsString();
+        SectionDAO sectionDAO = DAOFactory.getSectionDAOInstance();
+        List<Map<String,String>> infoList = sectionDAO.infoList(course_id,section_id,semester,year);
+        if (infoList.size() == 0){//开课不存在就返回0
+            return 0;
+        }
+
+        cancelDAO.delete_by_section(course_id,section_id,semester,year);
+        takesDAO.delete_by_section(course_id,section_id,semester,year);
+        TeachesDAO teachesDAO = DAOFactory.getTeachesDAOInstance();
+        teachesDAO.delete_by_section(course_id,section_id,semester,year);
+        String exam_id = infoList.get(0).get("exam_id");
+        EssayDAO essayDAO = DAOFactory.getEssayDAOInstance();
+        essayDAO.delete(exam_id);
+        PaperDAO paperDAO = DAOFactory.getPaperDAOInstance();
+        paperDAO.delete_by_examID(exam_id);
+        ExamDAO examDAO = DAOFactory.getExamDAOInstance();
+        examDAO.delete(exam_id);
+        Sec_arrangementDAO sec_arrangementDAO = DAOFactory.getSecArrangementDAOInstance();
+        sec_arrangementDAO.delete_by_section(course_id,section_id,semester,year);
+        applicationDAO.delete(getApp_id());
+        sectionDAO.delete(course_id,section_id,semester,year);
+        return 1;
+    }
+
+
 
     private String getApp_id() {
 //        String student_id = jsonObject.get("student_id").getAsString();
@@ -353,6 +416,8 @@ public class CourseServiceImpl implements CourseService {
             return false;
         }
     }
+
+
 
     private int auto() {//自动驳回教室满了的
         String course_id = jsonObject.get("course_id").getAsString();
@@ -410,6 +475,69 @@ public class CourseServiceImpl implements CourseService {
         int number = takesDAO.studentInfoList(course_id, section_id, semester, year).size();
         int sec_max = Integer.parseInt(max);
         return number >= sec_max;
+    }
+
+    private String check_sec_time(){
+        String student_id = jsonObject.get("student_id").getAsString();
+        String course_id = jsonObject.get("course_id").getAsString();
+        String section_id = jsonObject.get("section_id").getAsString();
+        String semester = jsonObject.get("semester").getAsString();
+        String year = jsonObject.get("year").getAsString();
+
+        Sec_arrangementDAO sec_arrangementDAO = DAOFactory.getSecArrangementDAOInstance();
+        List<Map<String,String>> studentTakes = takesDAO.findByStudent(student_id);
+        if (studentTakes == null || studentTakes.size() == 0){
+            return "no";
+        }
+        List<Integer> takesTime = new ArrayList<Integer>();
+        for(int i = 0;i < studentTakes.size();i ++){
+            String temp_course = studentTakes.get(i).get("course_id");
+            String temp_section = studentTakes.get(i).get("section_id");
+            String temp_semester = studentTakes.get(i).get("semsester");
+            String temp_year = studentTakes.get(i).get("year");
+            int temp = sec_arrangementDAO.find_time(temp_course,temp_section,temp_semester,temp_year);
+            takesTime.add(temp);
+        }
+        int this_time = 0;
+
+        this_time = sec_arrangementDAO.find_time(course_id,section_id,semester,year);
+        for (int i = 0;i < takesTime.size();i ++){
+            if(takesTime.get(i) == this_time){
+                return studentTakes.get(i).get("course_id")+","+studentTakes.get(i).get("section_id")+","+studentTakes.get(i).get("semester")+","+studentTakes.get(i).get("year");
+            }
+        }
+        return "no";
+    }
+
+    private String chec_exam_time(){
+        String student_id = jsonObject.get("student_id").getAsString();
+        String course_id = jsonObject.get("course_id").getAsString();
+        String section_id = jsonObject.get("section_id").getAsString();
+        String semester = jsonObject.get("semester").getAsString();
+        String year = jsonObject.get("year").getAsString();
+        SectionDAO sectionDAO =DAOFactory.getSectionDAOInstance();
+        String this_exam = sectionDAO.infoList(course_id,section_id,semester,year).get(0).get("exam_id");
+
+        List<String> examTimesTaken = new ArrayList<String>();
+
+        List<Map<String,String>> studentTakes = takesDAO.findByStudent(student_id);
+        if (studentTakes == null || studentTakes.size() == 0){
+            return "no";
+        }
+        for(int i = 0;i < studentTakes.size();i ++){
+            String temp_course = studentTakes.get(i).get("course_id");
+            String temp_section = studentTakes.get(i).get("section_id");
+            String temp_semester = studentTakes.get(i).get("semsester");
+            String temp_year = studentTakes.get(i).get("year");
+            examTimesTaken.add(sectionDAO.infoList(temp_course,temp_section,temp_semester,temp_year).get(0).get("exam_id"));
+
+        }
+        for (int i = 0;i < examTimesTaken.size();i ++){
+            if (examTimesTaken.get(i).equals(this_exam)){
+                return examTimesTaken.get(i);
+            }
+        }
+        return "no";
     }
 
 }

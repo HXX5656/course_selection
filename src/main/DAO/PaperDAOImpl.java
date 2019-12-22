@@ -72,6 +72,22 @@ public class PaperDAOImpl implements PaperDAO {
     }
 
     @Override
+    public int delete_by_examID(String id){
+        Connection connection = SqlUtil.createCon();
+        try{
+            String sql="DELETE FROM data.paper WHERE exam_id='" + id + "'";
+            PreparedStatement ppst = connection.prepareStatement(sql);
+            int ret=ppst.executeUpdate();
+            SqlUtil.closeCon();
+            return ret;
+        }catch (Exception e){
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return -1;
+        }
+    }
+
+    @Override
     public int modify(Paper paper) {
         Connection connection = SqlUtil.createCon();
         try {

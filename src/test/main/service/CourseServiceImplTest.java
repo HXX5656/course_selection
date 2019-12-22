@@ -51,7 +51,7 @@ public class CourseServiceImplTest {
     @Test
     public void testApply() throws Exception {
 
-        assert (courseService.apply() == 0);
+        assert (courseService.apply() == 1);
     }
 
     /**
@@ -59,7 +59,8 @@ public class CourseServiceImplTest {
      */
     @Test
     public void testConfirm_apply() throws Exception {
-        assert (courseService.confirm_apply() == 0);
+        System.out.println(courseService.confirm_apply());
+
     }
 
     /**

@@ -72,4 +72,9 @@ public class Sec_arrangementDAOImplTest {
 
         assert (sec_arrangementDAO.findRoom("9","9","1","2020").get(0).equals("9"));
     }
-} 
+
+    @Test
+    public void test_delete_by_selection() throws Exception {
+        sec_arrangementDAO.delete_by_section("9","9","1","2020");
+    }
+}

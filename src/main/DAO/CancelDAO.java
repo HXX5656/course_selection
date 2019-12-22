@@ -11,5 +11,6 @@ public interface CancelDAO {
     int modify(Cancel cancel);
     //List<Map<String,String>> infoList(String student_id, String course_id, String section_id, String semester, String year);
     int delete(Cancel cancel);
+    int delete_by_section(String course_id,String section_id,String semster,String year);
     int info_exist(String student_id, String course_id, String section_id, String semester, String year);
 }
