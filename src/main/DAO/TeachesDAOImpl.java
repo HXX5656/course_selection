@@ -102,6 +102,21 @@ public class TeachesDAOImpl implements TeachesDAO {
         }
     }
 
+    @Override
+    public List<Map<String, String>> get_teacher_id(String course_id,String section_id,String semester,String year) {
+        Connection connection = SqlUtil.createCon();
+        try {
+            String sql = "select * from data.teaches where  course_id=" + course_id + " AND section_id=" + section_id + " AND semester=" + semester + " AND year=" + year;
+            PreparedStatement ppst = connection.prepareStatement(sql);
+            ResultSet res = ppst.executeQuery();
+            SqlUtil.closeCon();
+            return setReturn(res);
+        } catch (Exception e) {
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return null;
+        }
+    }
     private List<Map<String, String>> setReturn(ResultSet res) {
         try {
             List<Map<String, String>> result = new ArrayList<>();

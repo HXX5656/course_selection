@@ -12,4 +12,5 @@ public interface TeachesDAO {
     int delete_by_section(String course_id,String section_id,String semster,String year);
     List<Map<String,String>> infoList(String teacher_id,String course_id,String section_id,String semester,String year);
     List<Map<String, String>> infoList(String teacher_id);
+    List<Map<String, String>> get_teacher_id(String course_id,String section_id,String semester,String year);
 }

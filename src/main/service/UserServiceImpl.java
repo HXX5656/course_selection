@@ -22,6 +22,7 @@ public class UserServiceImpl implements UserService {
     private PaperDAO paperDAO;
     private EssayDAO essayDAO;
     private TimeslotDAO timeslotDAO;
+    private TeachesDAO teachesDAO;
 
     public UserServiceImpl(JsonObject jsonObject) {
         this.jsonObject = jsonObject;
@@ -36,6 +37,7 @@ public class UserServiceImpl implements UserService {
         this.paperDAO = DAOFactory.getPaperDAOInstance();
         this.essayDAO = DAOFactory.getEssayDAOInstance();
         this.timeslotDAO = DAOFactory.getTimeslotDAOInstance();
+        this.teachesDAO = DAOFactory.getTeachesDAOInstance();
     }
     @Override
     public JsonObject get_student_exam(){
@@ -238,6 +240,27 @@ public class UserServiceImpl implements UserService {
                     j.addProperty("selected_persons",tmp.size()+"");
                     tmp = sectionDAO.infoList(course_id,section_id,semester,year);
                     if(tmp.size() == 1) {
+                        if(paperDAO.infoList(tmp.get(0).get("exam_id")).size() == 0){
+                            j.addProperty("exam_time","");
+                            j.addProperty("exam_type","essay");
+                        } else {
+                            j.addProperty("exam_type","paper");
+                            List<Map<String,String>> t_temp = paperDAO.infoList(tmp.get(0).get("exam_id"));
+                            if(t_temp.size() == 1) {
+                                String time_so_id = t_temp.get(0).get("time_slot_id");
+                                List<Map<String,String>> any = timeslotDAO.infoList(time_so_id);
+                                if(any.size()==1) {
+                                    j.addProperty("exam_time","周"+any.get(0).get("day_of_week")+" "
+                                            +any.get(0).get("start_time")+"-"+any.get(0).get("end_time")+" H"+t_temp.get(0).get("room_id"));
+                                } else {
+                                    assert (false);
+
+                                }
+                            } else {
+                                assert (false);
+                            }
+
+                        }
                         j.addProperty("max_members",tmp.get(0).get("max")+"");
                         tmp = sec_arrangementDAO.getArrangements(course_id,section_id,semester,year);
                         JsonObject jj = new JsonObject();
@@ -253,6 +276,11 @@ public class UserServiceImpl implements UserService {
                             count+=1;
                         }
                         j.add("time_place",jj);
+                        List<Map<String,String>> teacher_size=teachesDAO.get_teacher_id(course_id,section_id,semester,year);
+                        if(teacher_size.size()!=1){
+                            assert (false);
+                        }
+                        j.addProperty("teacher_id",teacher_size.get(0).get("teacher_id"));
                         jsons.add(index+"",j);
                         index+=1;
                         continue;

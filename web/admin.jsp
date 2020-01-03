@@ -270,21 +270,21 @@
         var json = data;
         var len = Object.keys(json).length;
         // var radios = "";
-        var html = "<tr><th>课程代码</th><th>课程名称</th><th>课程学分</th><th>课时安排</th><th>上课学期</th><th>选课人数</th></tr>";
+        var html = "<tr><th>课程代码</th><th>课程名称</th><th>课程学分</th><th>教师工号</th><th>课时安排</th><th>上课学期</th><th>总学时</th><th>选课人数</th><th>考试时间</th><th>考试类型</th></tr>";
         for (var i = 0;i<len;i++) {
             var item = json[i+""];
             var tmp = "";
             // cr_list[""+i]=item["semester"]+"/"+item["year"]+" "+item["course_code"];
             // radios += "<label class='radio-inline'><input type='radio' name='optradio' value='"+item["semester"]+"/"+item["year"]+" "+item["course_code"]+"' "
             //     + (i === 0?"checked":"")+">"+item["semester"]+"/"+item["year"]+" "+item["course_code"]+"</label>";
-            tmp += "<td>"+item["course_code"]+"</td><td>"+item["course_name"]+"</td><td>"+item["course_credit"]+"</td><td>";
+            tmp += "<td>"+item["course_code"]+"</td><td>"+item["course_name"]+"</td><td>"+item["course_credit"]+"</td><td>"+item["teacher_id"]+"</td><td>";
             var arr = item["time_place"];
             var arr_len = Object.keys(arr).length;
             for(var j = 0;j<arr_len;j++) {
                 var jtem = arr[j+""];
                 tmp += "周"+jtem["day"]+"第"+jtem["step"]+"节 H"+jtem["room"]+";<br>";
             }
-            tmp+="</td><td>"+item["year"]+"/"+item["semester"]+"</td><td>"+item["selected_persons"]+"/"+item["max_members"]+"</td>";
+            tmp+="</td><td>"+item["year"]+"/"+item["semester"]+"</td><td>"+item["course_period"]+"</td><td>"+item["selected_persons"]+"/"+item["max_members"]+"</td><td>"+item["exam_time"]+"</td><td>"+item["exam_type"]+"</td>";
             tmp = "<tr>"+tmp+"</tr>";
             html+=tmp;
         }
