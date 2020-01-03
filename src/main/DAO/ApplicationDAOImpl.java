@@ -57,6 +57,23 @@ public class ApplicationDAOImpl implements ApplicationDAO {
     }
 
     @Override
+    public int delete(String course_id, String section_id,String semester, String year) {
+        Connection connection =SqlUtil.createCon();
+        try
+        {
+            String sql = "DELETE FROM `data`.`application` WHERE course_id='" + course_id + "' and section_id='"+section_id+"' and semester='"+semester+"' and year='"+year+"'";
+
+            PreparedStatement ppst=connection.prepareStatement(sql);
+            int ret=ppst.executeUpdate();
+            SqlUtil.closeCon();
+            return ret;
+        } catch (Exception e) {
+            e.printStackTrace();
+            SqlUtil.closeCon();
+            return -1;
+        }
+    }
+    @Override
     public int modify(Application application) {
         Connection connection=SqlUtil.createCon();
         try {

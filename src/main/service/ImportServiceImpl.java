@@ -51,24 +51,24 @@ public class ImportServiceImpl implements ImportService {
         this.takesDAO = DAOFactory.getTakesDAOInstance();
     }
     @Override
-    public int import_select() throws IOException {
+    public String import_select() throws IOException {
         String name=jsonObject.get("name").getAsString();
         String path=(jsonObject==null)?"src/main/service/student.xlsx":jsonObject.get("filePath").getAsString();
         //String realPath = path.substring(path.lastIndexOf("\\")+1);
         if(name.equals("student")){
-            return importStudent(path);
+            return importStudent(path)+"";
         } else if(name.equals("teacher")) {
-            return importTeacher(path);
+            return importTeacher(path)+"";
         } else if(name.equals("course")) {
             return importCourse(path);
         } else if(name.equals("grade")) {
-            return importGrade(path);
+            return importGrade(path)+"";
         } else if(name.equals("classroom")) {
-            return importClassroom(path);
+            return importClassroom(path)+"";
         } else if(name.equals("department")) {
-            return importDepartment(path);
+            return importDepartment(path)+"";
         }
-        return -1;
+        return "不被识别的导入类型";
     }
     @Override
     public int add_student() {
@@ -198,20 +198,20 @@ public class ImportServiceImpl implements ImportService {
         }
         return -1;
     }
-    private int importCourse(String path) throws IOException {
-        int result = 0;
+    private String importCourse(String path) throws IOException {
+        String result = "";
         try {
             List<JsonObject> courses=ExcelUtil.parseJson(path);
             for (JsonObject json:courses) {
-                int tmp = addCourse(json);
-                if (tmp < 0)
-                    result = tmp;
+                String tmp = addCourse(json);
+                if (!StringUtil.isEmpty(tmp))
+                    result += tmp;
             }
             deleteExcel(path);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return -1;
+            return "出现异常，失败";
         }
         return result;
     }
@@ -228,7 +228,7 @@ public class ImportServiceImpl implements ImportService {
         return 0;
     }
     @Override
-    public  int addCourse(JsonObject jsonObject) throws IOException {
+    public  String addCourse(JsonObject jsonObject) throws IOException {
         try {
             Map<String, String> result = StringUtil.parse_course_code(jsonObject.get("course_code").getAsString());
             String course_id = result.get("course_id");
@@ -266,11 +266,15 @@ public class ImportServiceImpl implements ImportService {
                     String place = res.get("place");
                     for (int i = start; i <= end; i++) {
                         if(sec_arrangementDAO.infoList(i+"",place).size()>0) {
-                            return -2;
+                            String course_exist = sec_arrangementDAO.infoList(i+"", place).get(0).get("course_id");
+                            String course_exist_name = courseDAO.infoList(course_exist).get(0).get("course_name");
+                            return "在增加课程"+course_name+"时，与已经存在的课程"+course_exist_name+"存在时间地点上的冲突，该条课程插入失败；\n";
                         }
                         for (Map<String,String> tt:teach_courses) {
                             if(sec_arrangementDAO.infoList(i+"",tt.get("course_id"),tt.get("section_id"),tt.get("semester"),tt.get("year")).size()>0) {
-                                return -2;
+                                String course_exist = sec_arrangementDAO.infoList(i+"",tt.get("course_id"),tt.get("section_id"),tt.get("semester"),tt.get("year")).get(0).get("course_id");
+                                String course_exist_name = courseDAO.infoList(course_exist).get(0).get("course_name");
+                                return "在增加课程"+course_name+"时，任课人已经在重叠时间段教授课程"+course_exist_name+",出现冲突，该条课程插入失败;\n";
                             }
                         }
                     }
@@ -282,7 +286,7 @@ public class ImportServiceImpl implements ImportService {
             Exam exam = new Exam("", "18");
             int ret_exam = examDAO.append(exam);
             if (ret_exam < 1) {
-                return -1;
+                return "考试分配出现问题，插入失败";
             }
             String exam_id = ret_exam + "";
             Section section = new Section(course_id, section_id, semester, year, "1", "17", max, exam_id);
@@ -327,9 +331,9 @@ public class ImportServiceImpl implements ImportService {
             }
         }catch (Exception e) {
             e.printStackTrace();
-            return -1;
+            return "出现异常，插入失败";
         }
-        return 0;
+        return "";
 
 
     }

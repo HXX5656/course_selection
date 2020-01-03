@@ -130,28 +130,30 @@ public class Sec_arrangementDAOImpl implements Sec_arrangementDAO {
     }
 
     @Override
-    public int find_time(String course_id, String section_id, String semester, String year){
+    public List<Integer> find_time(String course_id, String section_id, String semester, String year){
         Connection connection = SqlUtil.createCon();
         int time = 0;
         try {
-            String sql = "select * from data.sec_arrangement where course_id=" + course_id + " AND section_id=" + section_id + " AND semester=" + semester + " AND year=" + year;
+            String sql = "select * from data.sec_arrangement where course_id='" + course_id + "' AND section_id='" + section_id + "' AND semester='" + semester + "' AND year='" + year+"'";
             PreparedStatement ppst = connection.prepareStatement(sql);
             ResultSet res = ppst.executeQuery();
             List<Map<String, String>> result = setReturn(res);
             SqlUtil.closeCon();
             if (result == null || result.size() == 0) {
-                return time;
+                return null;
             } else {
+                List<Integer> times = new ArrayList<>();
                 for (int i = 0; i < result.size(); i++) {
-                    time = Integer.parseInt(result.get(0).get("time_slot_id"));
+                    time = Integer.parseInt(result.get(i).get("time_slot_id"));
+                    times.add(time);
                 }
-                return time;
+                return times;
             }
 
         } catch (Exception e) {
             e.printStackTrace();
             SqlUtil.closeCon();
-            return 0;
+            return null;
         }
     }
 

@@ -45,7 +45,6 @@
 <form id="uploadForm" action="" method="post" enctype="multipart/form-data">
     <table>
         <tr>
-            <td>界面</td>
             <td>
                 <input type="file" name="fileName" id="fileName"/>
             </td>
@@ -248,7 +247,8 @@
                         else  if (data=="-1")
                             alert("操作失败");
                         else
-                            alert("操作成功");
+                            alert("操作结束："+data);
+                        $(location).attr("href",sessionStorage.getItem("role"));
                     }
                 });
         }
@@ -361,14 +361,18 @@
         $.ajax({
             url:"/Servlet",
             type:"post",
+            async:false,
             data:{"filePath":filePath,"type":"import","name":name,"course_code":c_code,"teacher_id":teacher_id},
+            dataType:"text",
             success:function(data){
                 if(data == "-2")
                     alert("数据冲突，插入失败");
                 else  if (data=="-1")
                     alert("操作失败");
                 else
-                    alert("操作成功");
+                    alert("操作结束："+data);
+
+                $(location).attr("href",sessionStorage.getItem("role"));
             }
         });
     }

@@ -127,7 +127,6 @@
         $("#exam").append(html);
     }
     function getCourseTable(data) {
-        alert(JSON.stringify(data));
         $("#id").html($("#id").html()+sessionStorage.getItem("userID"));
         var json = data;
         var len = Object.keys(json).length;
@@ -150,7 +149,6 @@
             tmp+="<td>"+item["grade"]+"</td>";
             if(item["grade"] !== null)
             {
-                alert("not in here:"+item["grade"]);
                 total_grade_son+=parseInt(item["grade"])*parseFloat(item["course_credit"]);
                 total_grades_mother+=parseInt(item["course_credit"]);
             }
@@ -162,12 +160,10 @@
         // alert("son/mother:"+total_grade_son+"/"+total_grades_mother);
         $("#gpa").html($("#gpa").html()+(total_grades_mother===0?"0":(total_grade_son/total_grades_mother)+""));
         $("#credits").html($("#credits").html()+credit);
-        alert(html);
         $("#chosen").append(html);
     }
     function getCourseList(data) {
         //var course_list = JSON.parse(data.replace(/\r\n/g, "<br>"));
-        alert(JSON.stringify(data));
         var json = data;
         var len = Object.keys(json).length;
         var html = "<tr><th>课程代码</th><th>课程名称</th><th>课程学分</th><th>课时安排</th><th>选课人数</th><th>操作</th></tr>";
@@ -191,17 +187,14 @@
             html+=tmp;
         }
         html="<table border=\"1px\" cellspacing=\"0px\" style=\"border-collapse:collapse\">"+html+"</table>";
-        alert(html);
         $("#demo").append(html);
 
     }
     $(".btn_submit").click(function operate(){
         var code=$(this).attr("id");
-        alert(code);
         var type=$(this).html()==="提交选课申请"?"apply":"select_drop";
         var course_id = code.substr(2,6);
         var section_id = code.substr(9,2);
-        alert(course_id+"前后"+section_id);
         if(type === "apply") {
             sessionStorage.setItem("course_code",code);
             sessionStorage.setItem("semester","1");
@@ -216,6 +209,7 @@
                 "year":"2019","semester":"1","course_id":course_id,"section_id":section_id},
             dataType:"text",
             success:function(data) {
+                alert(data);
                 if(data === "1") {
                     alert("您的操作已成功");
                 } else if(data === "-2"){

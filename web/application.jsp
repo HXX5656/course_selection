@@ -71,8 +71,10 @@
                     success:function(data) {
                         if(data === "1")
                             alert("您的申请成功提交");
+                        else if (data === "0")
+                            alert("申请失败哦，已退课程是不能选课事务申请的哦");
                         else
-                            alert("申请失败");
+                            alert("您已申请过，不要重复申请");
                         $(location).attr("href",sessionStorage.getItem("role"));
                     }
                 }

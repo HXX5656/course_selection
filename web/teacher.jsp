@@ -62,7 +62,6 @@
         <form id="uploadForm" action="" method="post" enctype="multipart/form-data">
             <table>
                 <tr>
-                    <td>界面</td>
                     <td>
                         <input type="file" name="fileName" id="fileName"/>
                     </td>
@@ -127,13 +126,7 @@
                 data:{"type":"confirm_app","app_id":app_id},
                 dataType:"text",
                 success:function(data) {
-                    if(data === "1") {
-                        alert("您的操作已成功");
-                    } else if(data === "-2"){
-                        alert("您的操作失败了,当前不在选课时间段内");
-                    } else {
-                        alert("您的操作失败");
-                    }
+                    alert(data);
                     $(location).attr("href",sessionStorage.getItem("role"));
             } }
             );
@@ -193,7 +186,7 @@
         $("#dep").html($("#dep").html()+dep);
     }
     function getCourseLists(data) {
-        alert(JSON.stringify(data));
+        // alert(JSON.stringify(data));
         var json = data;
         var len = Object.keys(json).length;
         var radios = "";
@@ -217,7 +210,7 @@
         }
         html="<table border=\"1px\" cellspacing=\"0px\" style=\"border-collapse:collapse\">"+html+"</table>";
         // alert("son/mother:"+total_grade_son+"/"+total_grades_mother);
-        alert(html);
+        // alert(html);
         $("#demo").append(html);
         $("#radio_box").append(radios);
         show_student_list();
@@ -228,7 +221,7 @@
         var semester = value_course.substr(0,1);
         var year = value_course.substr(2,4);
         var course_code = value_course.substr(7);
-        alert("展示的时候："+course_code);
+        // alert("展示的时候："+course_code);
         $.ajax({
             url:"/Servlet",
             type:"post",
@@ -282,7 +275,9 @@
         $.ajax({
             url:"/Servlet",
             type:"post",
+            async:false,
             data:{"filePath":filePath,"type":"import","name":name,"course_code":c_code,"teacher_id":teacher_id},
+            dataType:"text",
             success:function(data){
                 if(data == "-2")
                     alert("数据冲突，插入失败");
